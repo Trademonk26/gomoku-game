@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오목 게임</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+      gap: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: #e2b96f;
+      text-shadow: 0 0 20px rgba(226,185,111,0.4);
+    }
+
+    #status {
+      font-size: 1.1rem;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stone-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .stone-indicator.black { background: radial-gradient(circle at 35% 35%, #666, #111); }
+    .stone-indicator.white { background: radial-gradient(circle at 35% 35%, #fff, #bbb); border: 1px solid #999; }
+
+    #board-wrap {
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      cursor: crosshair;
+      border-radius: 4px;
+    }
+
+    #controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      padding: 10px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #btn-restart {
+      background: #e2b96f;
+      color: #1a1a2e;
+      font-weight: bold;
+    }
+
+    #btn-restart:hover { background: #f0c97f; transform: translateY(-1px); }
+
+    #btn-undo {
+      background: #2e3a5c;
+      color: #aac;
+      border: 1px solid #3a4a70;
+    }
+
+    #btn-undo:hover { background: #3a4a70; transform: translateY(-1px); }
+
+    #overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      border-radius: 4px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    #overlay.show { display: flex; }
+
+    #overlay h2 {
+      font-size: 2rem;
+      color: #e2b96f;
+      text-shadow: 0 0 20px rgba(226,185,111,0.7);
+    }
+
+    #overlay p { color: #ccc; font-size: 1rem; }
+
+    #mode-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .mode-btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      background: #2e3a5c;
+      color: #aac;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      border-color: #e2b96f;
+      color: #e2b96f;
+      background: #1e2a4c;
+    }
+  </style>
+</head>
+<body>
+  <h1>오목</h1>
+
+  <div id="mode-select">
+    <button class="mode-btn active" id="mode-pvp">2인 대전</button>
+    <button class="mode-btn" id="mode-ai">AI 대전</button>
+  </div>
+
+  <div id="status">
+    <span class="stone-indicator black"></span>
+    <span id="status-text">흑돌 차례</span>
+  </div>
+
+  <div id="board-wrap">
+    <canvas id="board"></canvas>
+    <div id="overlay">
+      <h2 id="winner-text"></h2>
+      <p>다시 하려면 재시작 버튼을 누르세요</p>
+    </div>
+  </div>
+
+  <div id="controls">
+    <button id="btn-undo">무르기</button>
+    <button id="btn-restart">재시작</button>
+  </div>
+
+<script>
+const BOARD_SIZE = 15;
+const CELL = 38;
+const PADDING = 28;
+const CANVAS_SIZE = PADDING * 2 + CELL * (BOARD_SIZE - 1);
+
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+
+const statusText = document.getElementById('status-text');
+const stoneIndicator = document.querySelector('.stone-indicator');
+const overlay = document.getElementById('overlay');
+const winnerText = document.getElementById('winner-text');
+
+let board, currentPlayer, gameOver, history, aiMode;
+
+// --- Mode buttons ---
+document.getElementById('mode-pvp').addEventListener('click', () => {
+  setMode(false);
+  document.getElementById('mode-pvp').classList.add('active');
+  document.getElementById('mode-ai').classList.remove('active');
+});
+document.getElementById('mode-ai').addEventListener('click', () => {
+  setMode(true);
+  document.getElementById('mode-ai').classList.add('active');
+  document.getElementById('mode-pvp').classList.remove('active');
+});
+
+function setMode(isAI) {
+  aiMode = isAI;
+  restart();
+}
+
+function restart() {
+  board = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
+  currentPlayer = 1; // 1=black, 2=white
+  gameOver = false;
+  history = [];
+  overlay.classList.remove('show');
+  updateStatus();
+  draw();
+}
+
+// --- Drawing ---
+function draw() {
+  ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  drawBoard();
+  drawStones();
+}
+
+function drawBoard() {
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  grad.addColorStop(0, '#c8a45a');
+  grad.addColorStop(1, '#a87e3a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    const x = PADDING + i * CELL;
+    const y = PADDING + i * CELL;
+    ctx.beginPath();
+    ctx.moveTo(x, PADDING);
+    ctx.lineTo(x, PADDING + (BOARD_SIZE - 1) * CELL);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(PADDING, y);
+    ctx.lineTo(PADDING + (BOARD_SIZE - 1) * CELL, y);
+    ctx.stroke();
+  }
+
+  // Star points
+  const stars = [3, 7, 11];
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  for (const r of stars) {
+    for (const c of stars) {
+      ctx.beginPath();
+      ctx.arc(PADDING + c * CELL, PADDING + r * CELL, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function drawStones() {
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      if (board[r][c]) drawStone(r, c, board[r][c]);
+    }
+  }
+}
+
+function drawStone(r, c, player) {
+  const x = PADDING + c * CELL;
+  const y = PADDING + r * CELL;
+  const radius = CELL * 0.44;
+
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+
+  const grad = ctx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, radius * 0.05, x, y, radius);
+  if (player === 1) {
+    grad.addColorStop(0, '#888');
+    grad.addColorStop(1, '#111');
+  } else {
+    grad.addColorStop(0, '#fff');
+    grad.addColorStop(1, '#bbb');
+  }
+
+  ctx.fillStyle = grad;
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+
+  // Last move marker
+  const last = history[history.length - 1];
+  if (last && last.r === r && last.c === c) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 0.3, 0, Math.PI * 2);
+    ctx.fillStyle = player === 1 ? 'rgba(255,80,80,0.8)' : 'rgba(80,80,255,0.8)';
+    ctx.fill();
+  }
+}
+
+// --- Input ---
+canvas.addEventListener('click', (e) => {
+  if (gameOver) return;
+  if (aiMode && currentPlayer === 2) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = CANVAS_SIZE / rect.width;
+  const scaleY = CANVAS_SIZE / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  const c = Math.round((mx - PADDING) / CELL);
+  const r = Math.round((my - PADDING) / CELL);
+
+  placeStone(r, c);
+});
+
+// Hover effect
+canvas.addEventListener('mousemove', (e) => {
+  if (gameOver) return;
+  if (aiMode && currentPlayer === 2) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = CANVAS_SIZE / rect.width;
+  const scaleY = CANVAS_SIZE / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  const c = Math.round((mx - PADDING) / CELL);
+  const r = Math.round((my - PADDING) / CELL);
+
+  draw();
+  if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === 0) {
+    const x = PADDING + c * CELL;
+    const y = PADDING + r * CELL;
+    ctx.beginPath();
+    ctx.arc(x, y, CELL * 0.44, 0, Math.PI * 2);
+    ctx.fillStyle = currentPlayer === 1 ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.4)';
+    ctx.fill();
+  }
+});
+
+canvas.addEventListener('mouseleave', () => draw());
+
+function placeStone(r, c) {
+  if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return;
+  if (board[r][c] !== 0) return;
+
+  board[r][c] = currentPlayer;
+  history.push({ r, c, player: currentPlayer });
+  draw();
+
+  if (checkWin(r, c, currentPlayer)) {
+    gameOver = true;
+    const name = currentPlayer === 1 ? '흑돌' : '백돌';
+    winnerText.textContent = `${name} 승리!`;
+    overlay.classList.add('show');
+    return;
+  }
+
+  if (history.length === BOARD_SIZE * BOARD_SIZE) {
+    gameOver = true;
+    winnerText.textContent = '무승부!';
+    overlay.classList.add('show');
+    return;
+  }
+
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+  updateStatus();
+
+  if (aiMode && currentPlayer === 2 && !gameOver) {
+    setTimeout(aiMove, 200);
+  }
+}
+
+// --- Win check ---
+function checkWin(r, c, player) {
+  const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+  for (const [dr, dc] of dirs) {
+    let count = 1;
+    for (let d = 1; d < 5; d++) {
+      const nr = r + dr * d, nc = c + dc * d;
+      if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE || board[nr][nc] !== player) break;
+      count++;
+    }
+    for (let d = 1; d < 5; d++) {
+      const nr = r - dr * d, nc = c - dc * d;
+      if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE || board[nr][nc] !== player) break;
+      count++;
+    }
+    if (count >= 5) return true;
+  }
+  return false;
+}
+
+// --- Status update ---
+function updateStatus() {
+  const name = currentPlayer === 1 ? '흑돌' : '백돌';
+  statusText.textContent = `${name} 차례`;
+  stoneIndicator.className = 'stone-indicator ' + (currentPlayer === 1 ? 'black' : 'white');
+}
+
+// --- Undo ---
+document.getElementById('btn-undo').addEventListener('click', () => {
+  if (gameOver || history.length === 0) return;
+
+  const moves = aiMode ? 2 : 1;
+  for (let i = 0; i < moves && history.length > 0; i++) {
+    const last = history.pop();
+    board[last.r][last.c] = 0;
+    currentPlayer = last.player;
+  }
+  updateStatus();
+  draw();
+});
+
+document.getElementById('btn-restart').addEventListener('click', restart);
+
+// --- AI ---
+function aiMove() {
+  const best = getBestMove();
+  if (best) placeStone(best.r, best.c);
+}
+
+function getBestMove() {
+  // Score-based greedy AI
+  let bestScore = -Infinity;
+  let bestMoves = [];
+
+  const candidates = getCandidates();
+
+  for (const [r, c] of candidates) {
+    if (board[r][c] !== 0) continue;
+
+    // Check immediate win
+    board[r][c] = 2;
+    if (checkWin(r, c, 2)) {
+      board[r][c] = 0;
+      return { r, c };
+    }
+    board[r][c] = 0;
+
+    // Check block opponent win
+    board[r][c] = 1;
+    if (checkWin(r, c, 1)) {
+      board[r][c] = 0;
+      return { r, c };
+    }
+    board[r][c] = 0;
+  }
+
+  for (const [r, c] of candidates) {
+    if (board[r][c] !== 0) continue;
+    const score = scorePosition(r, c, 2) * 1.1 + scorePosition(r, c, 1);
+    if (score > bestScore) {
+      bestScore = score;
+      bestMoves = [{ r, c }];
+    } else if (score === bestScore) {
+      bestMoves.push({ r, c });
+    }
+  }
+
+  if (bestMoves.length === 0) {
+    // fallback: center
+    for (let r = 5; r < 10; r++)
+      for (let c = 5; c < 10; c++)
+        if (board[r][c] === 0) return { r, c };
+  }
+
+  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+}
+
+function getCandidates() {
+  const visited = new Set();
+  const result = [];
+  const radius = 2;
+
+  if (history.length === 0) return [[7, 7]];
+
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      if (board[r][c] === 0) continue;
+      for (let dr = -radius; dr <= radius; dr++) {
+        for (let dc = -radius; dc <= radius; dc++) {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE) continue;
+          if (board[nr][nc] !== 0) continue;
+          const key = nr * BOARD_SIZE + nc;
+          if (!visited.has(key)) {
+            visited.add(key);
+            result.push([nr, nc]);
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
+
+function scorePosition(r, c, player) {
+  const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+  let total = 0;
+  board[r][c] = player;
+
+  for (const [dr, dc] of dirs) {
+    let count = 1, openEnds = 0;
+    for (let d = 1; d < 5; d++) {
+      const nr = r + dr * d, nc = c + dc * d;
+      if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE) break;
+      if (board[nr][nc] === player) count++;
+      else { if (board[nr][nc] === 0) openEnds++; break; }
+    }
+    for (let d = 1; d < 5; d++) {
+      const nr = r - dr * d, nc = c - dc * d;
+      if (nr < 0 || nr >= BOARD_SIZE || nc < 0 || nc >= BOARD_SIZE) break;
+      if (board[nr][nc] === player) count++;
+      else { if (board[nr][nc] === 0) openEnds++; break; }
+    }
+
+    if (count >= 5) total += 100000;
+    else if (count === 4 && openEnds >= 1) total += 10000;
+    else if (count === 3 && openEnds === 2) total += 1000;
+    else if (count === 3 && openEnds === 1) total += 100;
+    else if (count === 2 && openEnds === 2) total += 10;
+    else if (count === 2 && openEnds === 1) total += 1;
+  }
+
+  board[r][c] = 0;
+  return total;
+}
+
+// Init
+setMode(false);
+</script>
+</body>
+</html>
