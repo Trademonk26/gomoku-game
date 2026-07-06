@@ -1,0 +1,33 @@
+# 지자체 데이터센터 유치 의지 (A1) — 수동 큐레이션 시드
+# 루브릭: 3 = 대형 투자협약 체결·착공·준공 실적 / 2 = MOU·적극 유치활동 문서화 / 1 = 관심 표명
+# 정책: 출처 URL이 확보된 지역만 등재한다. 미등재 지역은 0점이 아니라 '결측'으로 처리된다.
+#       시 단위 사례를 구 단위로 임의 배정하지 않는다(예: 광주 국가AI데이터센터는 구 특정 보류).
+meta:
+  fetched_at: "2026-07-06"
+  coverage_note: "출처 확보 5개 지역 시드 — Phase 1-2에서 전국 조례·공고 스캔으로 확대"
+entries:
+  - sido_short: "울산"
+    name: "남구"
+    score: 3
+    note: "SK·AWS 초대형 AI 데이터센터(103MW, 확장 1GW 구상) 유치·기공"
+    source: "https://dealsite.co.kr/articles/143077/089060"
+  - sido_short: "전남광주"
+    name: "해남군"
+    score: 3
+    note: "솔라시도 글로벌 데이터센터 투자협약 — 2030년까지 국내 최대 규모 구축 추진"
+    source: "https://v.daum.net/v/20250707154723297"
+  - sido_short: "경북"
+    name: "포항시"
+    score: 2
+    note: "NHN 2조원 규모 글로벌 AI컴퓨팅센터 MOU + 블루밸리 산단 데이터센터"
+    source: "https://www.electimes.com/news/articleView.html?idxno=321111"
+  - sido_short: "경북"
+    name: "예천군"
+    score: 3
+    note: "KT클라우드 AI 클라우드 데이터센터 준공 — 지방 분산 선도 사례"
+    source: "https://www.electimes.com/news/articleView.html?idxno=321111"
+  - sido_short: "강원"
+    name: "춘천시"
+    score: 2
+    note: "도 차원 유치 추진(부지·전력 강점), 네이버 각 춘천 등 집적 선례"
+    source: "https://mobile.busan.com/view/busan/view.php?code=2024020618174460662"

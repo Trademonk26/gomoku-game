@@ -1,0 +1,19 @@
+# 국제 해저케이블 육양국 (N1)
+# 좌표는 공개 보도 기반 근사(±수 km) — 거리 지표(수십~수백 km 스케일)에는 충분. 재배포 제약이 있는
+# TeleGeography 지도는 사용하지 않고 국내 언론·공개 문헌으로 재구성했다.
+# 출처:
+#   - 경향신문 2024.11 "이름도 낯선 '육양국'" https://www.khan.co.kr/article/202411201535001
+#   - 디지털투데이 "KT 국제케이블 콤플렉스" https://www.digitaltoday.co.kr/news/articleView.html?idxno=111605
+meta:
+  fetched_at: "2026-07-06"
+  note: "부산(송정)이 국제 회선의 약 72%를 처리하는 최대 관문. 거제·태안이 보조 관문."
+stations:
+  - name: "부산 송정 육양국"
+    lon: 129.201
+    lat: 35.184
+  - name: "거제 육양국"
+    lon: 128.62
+    lat: 34.88
+  - name: "태안 육양국"
+    lon: 126.30
+    lat: 36.75
