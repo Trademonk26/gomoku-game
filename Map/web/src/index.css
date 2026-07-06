@@ -386,6 +386,28 @@ td.strong { font-weight: 650; }
   border-top: 1px solid var(--grid);
 }
 
+/* ── 예비 MVP 고지 배너 (v1.1 고지문) ── */
+.mvp-banner {
+  padding: 6px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--grid);
+}
+.mvp-banner::before { content: "⚠ "; }
+
+.callout {
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--grid);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface-1);
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
 @media (max-width: 900px) {
   .map-layout { flex-direction: column; }
   .map-wrap { min-height: 55vh; }

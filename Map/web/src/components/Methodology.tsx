@@ -1,4 +1,5 @@
 import { useApp } from "../lib/store";
+import { SOURCE_TYPE_KO } from "../lib/types";
 
 export default function Methodology() {
   const dataset = useApp((s) => s.dataset)!;
@@ -24,6 +25,11 @@ export default function Methodology() {
   페널티   = 계통 포화권(수도권) ${m.penalties.metro} · 계통 고립(제주) ${m.penalties.jeju}
   등급     = S ≥85 · A ≥75 · B ≥65 · C ≥50 · D <50
   안정성   = 가중치 ±20% 무작위 섭동 60회 → 순위 IQR (●5=안정 ~ ●1=민감)`}</pre>
+        <blockquote className="callout">
+          현재 점수는 공개 데이터 기반의 1차 스크리닝 결과입니다. 특히 <strong>전력 접속 가능성은 공개 데이터만으로 확정할 수 없으며</strong>,
+          한전 접속 예비검토·접속검토를 통해서만 확인 가능합니다. OSM 기반 전력설비 지표는 좌표 프록시이고, 한전 공식 데이터는
+          비식별·집계 데이터입니다 — 두 계열 모두 단독으로는 대용량 수전 가능성을 보장하지 않으므로 병행 표기합니다.
+        </blockquote>
         <p className="muted">
           개발가능면적 게이트(그린벨트·군사보호 등 규제 레이어 차감)는 BLUEPRINT §3.1에 설계되어 있으나, 규제 GIS가 API 키 대기 상태라
           <strong> Phase 1-1에서는 비활성</strong>입니다.
@@ -50,11 +56,11 @@ export default function Methodology() {
       </section>
 
       <section>
-        <h2>지표 사전 — 라이브 {m.indicators.length}개 / 설계 38개</h2>
+        <h2>지표 사전 — 라이브 {m.indicators.length}개 / 설계 {m.indicator_dictionary?.designed ?? 43}개 ({m.indicator_dictionary?.version ?? "v1.1"})</h2>
         <div className="table-scroll">
           <table>
             <thead>
-              <tr><th>ID</th><th>축</th><th className="left">지표</th><th>방향</th><th>신뢰도</th><th className="left">출처</th><th className="left">한계(주의)</th></tr>
+              <tr><th>ID</th><th>축</th><th className="left">지표</th><th>방향</th><th>신뢰도</th><th>유형</th><th className="left">출처</th><th className="left">한계(주의)</th></tr>
             </thead>
             <tbody>
               {m.indicators.map((i) => (
@@ -64,6 +70,7 @@ export default function Methodology() {
                   <td className="left">{i.label} ({i.unit})</td>
                   <td>{i.direction === "down" ? "↓" : "↑"}</td>
                   <td><span className={`rel rel-${i.reliability}`}>{i.reliability}</span></td>
+                  <td className="left muted">{SOURCE_TYPE_KO[i.source_type ?? ""] ?? "—"}</td>
                   <td className="left">{i.source.url ? <a href={i.source.url} target="_blank" rel="noreferrer">{i.source.name}</a> : i.source.name}</td>
                   <td className="left muted">{i.caveat}</td>
                 </tr>
@@ -76,6 +83,7 @@ export default function Methodology() {
           V-World(용도지역), 공공데이터포털(공시지가), ILIS(산업단지), SGIS(인구격자) API 키 발급 후 적재 예정.
         </p>
         <p className="muted">{m.osm_note} — OSM 변전소 태깅은 불완전할 수 있어 전력축 신뢰도는 C입니다.</p>
+        <p className="muted">신뢰도 C 지표의 축 내 기여 상한(50%)은 사전 v1.1 설계에 포함되어 있으며, L·S축 적재(Phase 1-2)와 함께 활성화됩니다.</p>
       </section>
 
       <section>

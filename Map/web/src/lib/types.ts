@@ -7,7 +7,22 @@ export interface IndicatorMeta {
   reliability: "A" | "B" | "C";
   source: { name: string; url: string };
   caveat: string;
+  source_type?: string;
+  proxy_level?: string;
+  official_source?: boolean;
+  requires_manual_verification?: boolean;
+  cannot_confirm_connection?: boolean;
 }
+
+export const SOURCE_TYPE_KO: Record<string, string> = {
+  official_stat: "공식 통계",
+  official_gis: "공식 GIS",
+  official_anonymized: "공식(비식별)",
+  official_plan: "공식 계획",
+  public_map_proxy: "공개지도 프록시",
+  model_proxy: "모델 추정",
+  manual_curation: "수동 큐레이션",
+};
 
 export interface AxisMeta {
   id: string;
@@ -40,6 +55,7 @@ export interface Dataset {
     generated_at: string;
     axes: AxisMeta[];
     indicators: IndicatorMeta[];
+    indicator_dictionary?: { version: string; designed: number };
     presets: Record<string, { label: string; w: Record<string, number> }>;
     penalties: { metro: number; jeju: number };
     deferred_axes: Record<string, string>;

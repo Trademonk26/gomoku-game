@@ -33,35 +33,51 @@ PRESETS = {
 INDICATORS = [
     {"id": "P1", "axis": "P", "label": "154kV+ 변전소 근접성", "unit": "km", "direction": "down",
      "reliability": "C", "source": {"name": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org"},
+     "source_type": "public_map_proxy", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": True, "cannot_confirm_connection": True,
      "caveat": "OSM 태깅 기반 — 전압 미태깅 변전소 누락 가능. 여유용량은 알 수 없음(한전 접속검토 필수)",
      "good": "대용량 수전 인프라(154kV급) 근접", "bad": "송전 인프라 원거리 — 전용선로 신설 비용·기간 부담"},
     {"id": "P2", "axis": "P", "label": "반경 20km 154kV+ 변전소 수", "unit": "개", "direction": "up",
      "reliability": "C", "source": {"name": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org"},
+     "source_type": "public_map_proxy", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": True, "cannot_confirm_connection": True,
      "caveat": "OSM 태깅 기반 — 실제 여유용량과 무관",
      "good": "복수 변전소 인접 — 계통 대안 확보 유리", "bad": "인접 변전소 희소"},
     {"id": "P6", "axis": "P", "label": "반경 30km 대형 발전설비", "unit": "MW", "direction": "up",
      "reliability": "C", "source": {"name": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org"},
+     "source_type": "public_map_proxy", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": True, "cannot_confirm_connection": True,
      "caveat": "OSM 출력 태그 합산(원전·석탄·가스·유류) — 누락·구식 값 가능",
      "good": "대형 발전원 인접 — 계통 여유·안정성 프록시", "bad": "대형 발전원 원거리"},
     {"id": "W5", "axis": "W", "label": "냉방도일(연평균, 기준 24°C)", "unit": "°C·일", "direction": "down",
      "reliability": "B", "source": {"name": "Open-Meteo ERA5 (2020~2024)", "url": "https://open-meteo.com"},
+     "source_type": "model_proxy", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": False,
      "caveat": "재분석(ERA5) 격자 기반 — 기상청 관측 평년값 대체 프록시",
      "good": "냉방 부하 낮음 — 프리쿨링·PUE 유리", "bad": "냉방 부하 높음 — 냉각 비용 부담"},
     {"id": "N1", "axis": "N", "label": "국제 육양국 거리", "unit": "km", "direction": "down",
      "reliability": "C", "source": {"name": "공개 보도 기반 자체 정리(부산 송정·거제·태안)", "url": "https://www.khan.co.kr/article/202411201535001"},
+     "source_type": "manual_curation", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": True,
      "caveat": "육양국 좌표는 ±수 km 근사 — 케이블 시스템별 용량·여유는 별도 확인",
      "good": "국제 해저케이블 관문 근접", "bad": "국제 트래픽 관문 원거리"},
     {"id": "N2", "axis": "N", "label": "서울 IX 왕복지연 추정", "unit": "ms", "direction": "down",
      "reliability": "C", "source": {"name": "직선거리×우회계수(1.4)×5µs/km 산식", "url": ""},
+     "source_type": "model_proxy", "proxy_level": "weak_proxy", "official_source": False,
+     "requires_manual_verification": True,
      "caveat": "도로·직선 기반 추정 — 실제 광경로는 통신사 견적으로 확인 필요",
      "good": "수도권 저지연 서비스권", "bad": "저지연 서비스 부적합(AI 훈련 워크로드는 무관)"},
     {"id": "H3", "axis": "H", "label": "지진구역계수", "unit": "g", "direction": "down",
      "reliability": "A", "source": {"name": "국토안전관리원 지진구역도(KDS)", "url": "https://www.kalis.or.kr/wpge/m_195/info/info060601.do"},
+     "source_type": "official_stat", "proxy_level": "direct", "official_source": True,
+     "requires_manual_verification": False,
      "caveat": "행정구역 단위 설계기준값 — 동남권 실제 지진활동도(활성단층)는 Phase 2 H2로 보강",
      "good": "설계 지진하중 낮은 구역(지진구역 II)", "bad": None},
     {"id": "A1", "axis": "A", "label": "지자체 유치 의지(큐레이션)", "unit": "점", "direction": "up",
      "reliability": "C", "source": {"name": "언론 보도 수동 큐레이션(출처 필수 정책)", "url": ""},
-     "caveat": "출처 확보 5개 지역만 시드 — 미등재 지역은 0점이 아닌 결측",
+     "source_type": "manual_curation", "proxy_level": "proxy", "official_source": False,
+     "requires_manual_verification": True,
+     "caveat": "v1.1 재정의: 공식 조례·공고·전담조직 중심(B 목표) — 현행 시드 5개 지역은 언론 보도 포함(C·재검증 대상), 미등재 지역은 0점이 아닌 결측",
      "good": "유치 실적·의지 문서화(협약·기공·준공)", "bad": None},
 ]
 
@@ -106,7 +122,8 @@ def build_evidence(m, values, pct, flags, incentives):
             caution.append({"ind": iid, "text": f"「{ind['label']}」 전국 하위 {max(1, round(p))}% ({vtxt}) — {ind['bad']}"})
         if ind["reliability"] == "C" and p >= 80:
             verify.append({"ind": iid, "text": f"「{ind['label']}」은(는) 프록시 지표 — {ind['caveat']}"})
-    p_axis = [pct[m["code"]].get(i) for i in ("P1", "P2", "P6")]
+    conn_ids = [i["id"] for i in INDICATORS if i.get("cannot_confirm_connection")]
+    p_axis = [pct[m["code"]].get(i) for i in conn_ids]
     p_avail = [x for x in p_axis if x is not None]
     if p_avail and sum(p_avail) / len(p_avail) >= 75:
         verify.append({"ind": "P", "text": "전력축 상위권 — 한전 접속검토(예비검토→본검토) 신청으로 실제 수전 가능성 확인 필수"})
@@ -159,6 +176,7 @@ def main():
             "generated_at": time.strftime("%Y-%m-%d"),
             "axes": AXES,
             "indicators": [{k: v for k, v in ind.items() if k not in ("good", "bad")} for ind in INDICATORS],
+            "indicator_dictionary": {"version": "v1.1", "designed": 43},
             "presets": PRESETS,
             "penalties": {"metro": -15, "jeju": -10},
             "deferred_axes": {"L": "V-World·공공데이터포털 API 키 필요", "S": "ILIS·SGIS API 키 필요"},

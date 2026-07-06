@@ -79,6 +79,11 @@ export default function App() {
 
       <WeightPanel />
 
+      <div className="mvp-banner" role="note">
+        Phase 1-1 예비 MVP(무키 공개 데이터) — L(토지·규제)·S(부지) 축과 개발가능면적 게이트가 비활성입니다.
+        현재 랭킹은 투자 판단이 아니라 UI·산식·데이터 구조 검증용입니다.
+      </div>
+
       <main className="main">
         {tab === "map" && (
           <div className="map-layout">
