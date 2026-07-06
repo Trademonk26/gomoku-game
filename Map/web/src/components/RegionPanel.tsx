@@ -6,8 +6,6 @@ import { useApp } from "../lib/store";
 import type { ScoresBundle } from "../lib/useScores";
 import type { IndicatorMeta, Region } from "../lib/types";
 
-const LIVE_AXES = ["P", "W", "N", "H", "A"];
-
 function Dots({ n }: { n: number }) {
   return <span className="dots" title={`순위 안정성 ${n}/5 (가중치 ±20% 섭동 시 순위 변동폭)`}>{"●".repeat(n)}{"○".repeat(5 - n)}</span>;
 }
@@ -31,7 +29,7 @@ function Radar({ region, scores }: { region: Region; scores: ScoresBundle }) {
   }, []);
 
   useEffect(() => {
-    const axisLabels = dataset.meta.axes.filter((a) => LIVE_AXES.includes(a.id));
+    const axisLabels = dataset.meta.axes.filter((a) => !(a.id in dataset.meta.deferred_axes));
     const vals = axisLabels.map((a) => res.axis[a.id] ?? 0);
     const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const ink = dark ? "#c3c2b7" : "#52514e";
@@ -89,6 +87,8 @@ export default function RegionPanel({ scores }: { scores: ScoresBundle }) {
   const select = useApp((s) => s.select);
 
   const region = useMemo(() => dataset.regions.find((r) => r.code === selected) ?? null, [dataset, selected]);
+  const deferredText = Object.entries(dataset.meta.deferred_axes).map(([k, v]) => `${k}(${v})`).join(" · ");
+  const liveAxes = dataset.meta.axes.filter((a) => !(a.id in dataset.meta.deferred_axes));
 
   if (!region) {
     return (
@@ -149,7 +149,7 @@ export default function RegionPanel({ scores }: { scores: ScoresBundle }) {
       </div>
 
       <Radar region={region} scores={scores} />
-      <p className="muted small">L(토지·규제)·S(부지) 축은 데이터 대기 — 가중치는 확보된 축으로 재분배됨</p>
+      <p className="muted small">결측 축: {deferredText || "없음"} — 가중치는 확보된 축으로 재분배됨</p>
 
       {region.evidence.recommend.length > 0 && (
         <section className="ev ev-good">
@@ -172,7 +172,7 @@ export default function RegionPanel({ scores }: { scores: ScoresBundle }) {
 
       <section className="ind-list">
         <h3>지표 상세</h3>
-        {dataset.meta.axes.filter((a) => LIVE_AXES.includes(a.id)).map((a) => (
+        {liveAxes.map((a) => (
           <div key={a.id} className="axis-group">
             <div className="axis-head">
               <span>{a.label}</span>

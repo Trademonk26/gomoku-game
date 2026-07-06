@@ -1,8 +1,8 @@
 PY := .venv/bin/python
 
-.PHONY: all boundaries osm cdd dataset test web-data web-build
+.PHONY: all boundaries osm cdd ilis dataset test web-data web-build
 
-all: boundaries osm cdd dataset test web-data
+all: boundaries osm cdd ilis dataset test web-data
 
 boundaries:
 	$(PY) pipeline/sources/fetch_boundaries.py
@@ -12,6 +12,9 @@ osm:
 
 cdd:
 	$(PY) pipeline/sources/fetch_cdd.py
+
+ilis:
+	$(PY) pipeline/sources/fetch_ilis_industrial_land.py
 
 dataset:
 	$(PY) pipeline/indicators/build_dataset.py

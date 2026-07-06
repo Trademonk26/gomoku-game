@@ -60,6 +60,7 @@ export interface Dataset {
     penalties: { metro: number; jeju: number };
     deferred_axes: Record<string, string>;
     osm_note: string;
+    ilis_note?: string;
     power_overlay: {
       substations: Array<{ lon: number; lat: number; v: number; name: string }>;
       plants: Array<{ lon: number; lat: number; mw: number; src: string; name: string }>;
