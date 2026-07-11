@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UL 9540A 6판 LSFT · Rev.2 심화 — 그레이존 파일</title>
+<style>
+:root{
+  --bg:#f2f5fa; --card:#ffffff; --ink:#1e2a3a; --sub:#5a6b80; --line:#d9e1ec;
+  --navy:#1b2f55; --navy2:#2c4a86; --accent:#e8590c; --accent-soft:#fff0e6;
+  --ok:#2b7a3e; --okbg:#e9f6ec; --no:#c22e2e; --nobg:#fdeeee; --warn:#b35c00; --warnbg:#fff4e2;
+  --steel-top:#dde6f0; --steel-front:#bcc9db; --steel-left:#9fb0c8; --steel-line:#33415c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.65;
+}
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(15,25,50,.25)}
+.brand{max-width:1080px;margin:0 auto;padding:14px 20px 8px;display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.brand h1{font-size:1.05rem;font-weight:700;letter-spacing:.2px}
+.brand .ed{font-size:.78rem;color:#ffd8bf;background:rgba(232,89,12,.25);border:1px solid rgba(232,89,12,.6);border-radius:20px;padding:1px 10px}
+.brand .sub{font-size:.8rem;color:#b9c6de}
+nav.tabs{max-width:1080px;margin:0 auto;padding:0 12px;display:flex;overflow-x:auto}
+nav.tabs button{
+  appearance:none;border:0;background:transparent;color:#b9c6de;cursor:pointer;
+  padding:10px 16px 12px;font-size:.9rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;
+}
+nav.tabs button:hover{color:#fff}
+nav.tabs button.active{color:#fff;border-bottom-color:var(--accent)}
+nav.tabs button .tick{color:#7fd18f;margin-left:4px;display:none}
+nav.tabs button.visited .tick{display:inline}
+/* ---------- layout ---------- */
+main{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+section.step{display:none}
+section.step.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.step-head{margin:6px 0 20px}
+.step-head .kicker{color:var(--accent);font-weight:800;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase}
+.step-head h2{font-size:1.55rem;color:var(--navy);margin-top:2px}
+.step-head p.lead{color:var(--sub);margin-top:6px;max-width:820px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:16px 0}
+.card h3{font-size:1.1rem;color:var(--navy);margin-bottom:10px}
+.card h4{font-size:.98rem;color:var(--navy);margin:14px 0 6px}
+.card p{margin:8px 0}
+.card ul,.card ol{margin:8px 0 8px 22px}
+.card li{margin:4px 0}
+.muted{color:var(--sub);font-size:.9rem}
+.en{font-style:normal;font-weight:600}
+code.tag{background:#eef2f8;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:.85em;color:var(--navy2);font-family:inherit}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:20px;padding:2px 10px;vertical-align:middle}
+.badge.req{background:var(--nobg);color:var(--no)}
+.badge.opt{background:var(--warnbg);color:var(--warn)}
+.badge.new{background:var(--accent-soft);color:var(--accent)}
+.badge.dead{background:#e9edf3;color:#8a97a8;text-decoration:line-through}
+.callout{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.callout.blue{border-left-color:var(--navy2);background:#eef3fb}
+.verify{background:#fdf3d7;border:1px dashed #d9a520;color:#7a5c00;border-radius:8px;padding:2px 8px;font-size:.82em;white-space:nowrap}
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 13px;text-align:left;vertical-align:top}
+th{background:#eef2f8;color:var(--navy);font-weight:700}
+/* ---------- flow diagram (before/after) ---------- */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+@media(max-width:760px){.ba-grid{grid-template-columns:1fr}}
+.ba{border:1px solid var(--line);border-radius:12px;padding:16px}
+.ba.before{background:#f6f8fb}
+.ba.after{background:var(--accent-soft);border-color:#f3c7a8}
+.ba .ba-title{font-weight:800;font-size:.95rem;margin-bottom:10px}
+.ba.before .ba-title{color:var(--sub)}
+.ba.after .ba-title{color:var(--accent)}
+.flow{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.fnode{background:#fff;border:2px solid var(--navy2);border-radius:10px;padding:9px 14px;text-align:center;font-size:.9rem}
+.fnode b{display:block;color:var(--navy)}
+.fnode small{color:var(--sub)}
+.fnode.dead{border-style:dashed;border-color:#b6bfcc;color:#93a0b2;background:#f2f4f8;position:relative}
+.fnode.dead b{color:#93a0b2;text-decoration:line-through}
+.fnode.hot{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,89,12,.15)}
+.fnode.hot b{color:var(--accent)}
+.farrow{text-align:center;color:var(--navy2);font-size:1.05rem;line-height:1.5;font-weight:700}
+.farrow.dead{color:#b6bfcc}
+/* ---------- choices / feedback ---------- */
+.qblock{margin:18px 0 6px}
+.qblock .q{font-weight:700;color:var(--navy);margin-bottom:10px}
+.qblock .q .qno{display:inline-block;background:var(--navy);color:#fff;border-radius:8px;font-size:.78rem;padding:1px 9px;margin-right:8px;vertical-align:1px}
+.choices{display:flex;flex-direction:column;gap:8px}
+button.choice{
+  appearance:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;
+  transition:border-color .15s, background .15s;
+}
+button.choice:hover{border-color:var(--navy2)}
+button.choice .mark{display:inline-block;width:1.4em;font-weight:800}
+button.choice.sel-ok{border-color:var(--ok);background:var(--okbg)}
+button.choice.sel-no{border-color:var(--no);background:var(--nobg)}
+button.choice.sel-warn{border-color:var(--warn);background:var(--warnbg)}
+.feedback{border-radius:10px;padding:13px 16px;margin-top:10px;font-size:.93rem}
+.feedback.ok{background:var(--okbg);border:1px solid #bfe3c8;color:#1e5c2c}
+.feedback.no{background:var(--nobg);border:1px solid #f2c4c4;color:#8f1f1f}
+.feedback.warn{background:var(--warnbg);border:1px solid #f0d3a0;color:#7a4a00}
+.feedback b{display:block;margin-bottom:4px}
+/* ---------- stages ---------- */
+.stagebar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.sdot{font-size:.78rem;font-weight:700;border-radius:20px;padding:3px 12px;background:#e7ecf4;color:#7b8aa0;border:1px solid var(--line)}
+.sdot.cur{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sdot.done{background:var(--okbg);color:var(--ok);border-color:#bfe3c8}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:16px 0;overflow:hidden}
+.stage-head{display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid transparent}
+.stage-head .no{flex:none;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.stage-head h3{font-size:1.06rem;color:var(--navy)}
+.stage-head .st-en{font-size:.8rem;color:var(--sub)}
+.stage-head .lockmsg{margin-left:auto;font-size:.82rem;color:#98a5b8;display:none}
+.stage.locked .stage-head .lockmsg{display:block}
+.stage.locked .stage-head .no{background:#c3ccd9}
+.stage.locked{background:#f7f9fc}
+.stage.locked .stage-body{display:none}
+.stage.done .stage-head .no{background:var(--ok)}
+.stage-body{padding:6px 22px 22px;border-top:1px solid var(--line)}
+.stage-next{
+  appearance:none;border:0;cursor:pointer;font:inherit;font-weight:700;color:#fff;
+  background:var(--accent);border-radius:10px;padding:11px 26px;margin-top:18px;
+}
+.stage-next:disabled{background:#c9d2de;cursor:not-allowed}
+.stage-next.finished{background:var(--ok)}
+/* ---------- scenes / svg ---------- */
+.scene{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:10px;margin:14px 0}
+.scene svg{display:block;width:100%;height:auto}
+.scene .cap{font-size:.82rem;color:var(--sub);text-align:center;padding:4px 8px 6px}
+svg text{font-family:inherit}
+.photo-slot{
+  border:2px dashed #b9c6da;border-radius:12px;background:#fbfcfe;color:#8ea0b8;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  min-height:120px;margin:14px 0;font-size:.88rem;text-align:center;padding:16px;
+}
+.photo-slot .ph-ico{font-size:1.6rem}
+/* ---------- checklist ---------- */
+.ck{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:10px 0;align-items:flex-start}
+.ck input[type=checkbox]{flex:none;width:20px;height:20px;margin-top:4px;accent-color:var(--accent);cursor:pointer}
+.ck .ck-t{font-weight:700;color:var(--navy)}
+.ck .ck-why{font-size:.88rem;color:var(--accent);margin-top:6px}
+.ck .ck-why::before{content:"LSFT 관점 → ";font-weight:700}
+.ck.checked{background:var(--okbg);border-color:#bfe3c8}
+/* ---------- misc ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.next-step{
+  display:inline-block;appearance:none;border:0;cursor:pointer;font:inherit;font-weight:700;
+  color:#fff;background:var(--navy);border-radius:10px;padding:12px 28px;margin-top:20px;
+}
+.next-step:hover{background:var(--navy2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 14px;font-size:.85rem}
+.chip.req{border-color:#f2c4c4;background:var(--nobg);color:var(--no);font-weight:700}
+.chip.opt{border-color:#f0d3a0;background:var(--warnbg);color:var(--warn)}
+footer{max-width:1080px;margin:0 auto;padding:20px;color:#8ea0b8;font-size:.8rem;border-top:1px solid var(--line)}
+footer button{appearance:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 12px;cursor:pointer;color:var(--sub);font:inherit;font-size:.8rem}
+</style>
+<style>
+/* ---------- Rev.2 심화 전용 스타일 ---------- */
+.adv-note{background:#1b2f55;color:#dbe4f5;border-radius:14px;padding:18px 22px;margin:18px 0;font-size:.95rem}
+.adv-note b{color:#ffd8bf}
+.toc{position:sticky;top:64px;z-index:40;background:var(--bg);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line)}
+.toc a{text-decoration:none;font-size:.82rem;font-weight:700;color:var(--navy2);background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 13px}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.gray-head{display:flex;align-items:baseline;gap:10px;margin:34px 0 6px}
+.gray-head .gno{flex:none;background:var(--accent);color:#fff;font-weight:800;border-radius:8px;padding:2px 12px;font-size:.9rem}
+.gray-head h2{font-size:1.25rem;color:var(--navy)}
+.q-restate{color:var(--sub);font-style:normal;margin:2px 0 10px;font-size:.95rem}
+.tri{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0;background:var(--card)}
+.tri>div{padding:16px 20px}
+.tri .t-sure{border-left:5px solid var(--ok);background:#fbfefb}
+.tri .t-unsure{border-left:5px solid #d9a520;background:#fffdf6;border-top:1px solid var(--line)}
+.tri .t-impl{border-left:5px solid var(--navy2);background:#fafcff;border-top:1px solid var(--line)}
+.tri h4{margin:0 0 6px;font-size:.92rem}
+.tri .t-sure h4{color:var(--ok)}
+.tri .t-unsure h4{color:#9a7400}
+.tri .t-impl h4{color:var(--navy2)}
+.tri p,.tri ul{margin:6px 0}
+.tri ul{margin-left:20px}
+/* 분류 게임 */
+.comp-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:8px 0}
+.comp-row .c-name{flex:1 1 260px;font-weight:700;color:var(--navy)}
+.comp-row .c-name small{display:block;font-weight:400;color:var(--sub)}
+.cls-btns{display:flex;gap:6px;flex:none}
+.cls-btn{appearance:none;cursor:pointer;font:inherit;font-size:.82rem;font-weight:700;border-radius:8px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;color:var(--sub)}
+.cls-btn:hover{border-color:var(--navy2);color:var(--navy2)}
+.comp-row.answered .cls-btn{pointer-events:none;opacity:.45}
+.comp-row.answered .cls-btn.picked{opacity:1}
+.cls-btn.picked.right{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.cls-btn.picked.wrong{border-color:var(--no);background:var(--nobg);color:var(--no)}
+.comp-fb{flex-basis:100%;font-size:.88rem;border-radius:8px;padding:10px 14px;display:none}
+.comp-fb.show{display:block}
+.comp-fb.ok{background:var(--okbg);color:#1e5c2c}
+.comp-fb.no{background:var(--nobg);color:#8f1f1f}
+.game-score{font-size:.9rem;font-weight:700;color:var(--navy2);margin:10px 0}
+/* 사고실험 표 케이스 색 */
+td.res-fail{color:var(--no);font-weight:700}
+td.res-pass{color:var(--ok);font-weight:700}
+td.res-gray{color:#9a7400;font-weight:700}
+/* 빈틈 카드 */
+.gap{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:10px 0}
+.gap .g-no{flex:none;width:30px;height:30px;border-radius:50%;background:#1b2f55;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.88rem}
+.gap .g-t{font-weight:700;color:var(--navy)}
+.gap .g-im{font-size:.88rem;color:var(--accent);margin-top:6px}
+.gap .g-im::before{content:"설계자에게 → ";font-weight:700}
+a.backlink{color:#ffd8bf;font-size:.8rem;text-decoration:none;margin-left:auto;align-self:center;white-space:nowrap}
+a.backlink:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>UL 9540A <span class="ed">Rev.2 · 심화</span> Section 10 LSFT — 그레이존 파일 (Gray-Zone Deep Dive)</h1>
+    <span class="sub">확정 지식이 아닌 판단 훈련 · 기초 과정 수료 후 진행 권장</span>
+    <a class="backlink" href="index.html">← 기초 과정(Rev.1)으로</a>
+  </div>
+</header>
+
+<main>
+
+<div class="adv-note">
+  <b>이 문서의 성격:</b> 기초 과정(Rev.1)은 &ldquo;확정된 규격 지식&rdquo;을 다뤘습니다. 이 문서는 반대로,
+  LSFT를 처음 접한 실무자들이 실제로 헷갈려 하는 <b>경계 사례 6가지</b>를 다룹니다.
+  각 항목은 <b>확실한 것 / 원문·CB 확인이 필요한 것 / 설계 시사점</b>의 3단으로 분리했으며,
+  미확정 내용은 확정된 것처럼 쓰지 않았습니다. <span class="verify">[원문 검수 필요]</span> 표기는
+  UL 9540A 6판 원문 확보 후 갱신 대상입니다.
+</div>
+
+<div class="toc">
+  <a href="#g1">① Developed Fire의 범위</a>
+  <a href="#g2">② TRPP vs 소방 설비 경계</a>
+  <a href="#g3">③ Target 외피 관통</a>
+  <a href="#g4">④ Heat Flux의 실익</a>
+  <a href="#g5">⑤ 점화원의 위치</a>
+  <a href="#g6">⑥ Target Full Form</a>
+  <a href="#gaps">⑦ 이 시험이 못 보는 것들</a>
+</div>
+
+<!-- ============================ ① developed fire 범위 ============================ -->
+<div class="gray-head" id="g1"><span class="gno">그레이존 ①</span><h2>&ldquo;완전 연소&rdquo;의 범위 — 컨테이너 전체인가, 랙 종대인가</h2></div>
+<p class="q-restate">Q. Initiating Container 전체를 태워야만 developed fire 기준을 만족하나?
+점화점 주변의 수직 랙 열(종대)만 전소되면 되는 것 아닌가?</p>
+<div class="tri">
+  <div class="t-sure"><h4>■ 공개 자료로 확실한 것</h4>
+    <ul>
+      <li>LSFT의 전제는 <b>컨테이너 1기 단위의 완전 연소(complete combustion)</b>다. &ldquo;랙 1열의 전소&rdquo;가 아니라 &ldquo;컨테이너가 화재에 휩싸인 상태&rdquo;가 시나리오의 목적이다.</li>
+      <li>내부 가연물(Cell·플라스틱 등) <b>대부분이 소진</b>될 때까지 연소시키며, 중간 소화 개입은 시나리오를 스스로 깨는 행위다.</li>
+      <li>developed fire는 &ldquo;점화 성공&rdquo;이 아니라 <b>화재가 충분히 성장한 상태</b>를 뜻한다 — 국부 화염으로는 부족하다.</li>
+    </ul>
+  </div>
+  <div class="t-unsure"><h4>▲ 원문·CB 확인이 필요한 것 <span class="verify">[원문 검수 필요]</span></h4>
+    <ul>
+      <li>&ldquo;대부분(majority)&rdquo;의 정량 기준 — 질량 기준인지, 육안 판정인지, 잔존 허용량이 있는지.</li>
+      <li>점화점 반대편 랙이 <b>타지 않은 채 화세가 자연 종료</b>된 경우: 시험 성립으로 보나, 추가 점화(재점화) 절차가 있나.</li>
+      <li>버너 위치·수량으로 연소 범위를 유도하는 요구사항이 있는지.</li>
+    </ul>
+  </div>
+  <div class="t-impl"><h4>● 설계 시사점</h4>
+    <p>실무 관점의 역설: <b>안 타고 남은 랙이 오히려 골칫거리</b>다. 미연소 셀은 재점화·가스 방출·잔류 에너지 리스크로 시험 종료 판정과 후처리를 복잡하게 만든다.
+    시험 계획서 단계에서 CB와 <b>&ldquo;연소 종료·잔존물 처리&rdquo; 문구를 먼저 합의</b>하고, 내부 연소 하중 분포(랙 간 화염 전달 경로)를 도면으로 검토해 두는 것이 좋다.</p>
+  </div>
+</div>
+
+<!-- ============================ ② TRPP vs 소방 설비 ============================ -->
+<div class="gray-head" id="g2"><span class="gno">그레이존 ②</span><h2>TRPP vs Fire Protection System — 무엇을 끄고 무엇을 남기나</h2></div>
+<p class="q-restate">Q. 시험 시 비활성화(disengage) 대상과 유지 대상의 경계가 헷갈린다.
+어떤 부품이 어디에 속하고, 그 배경 논리는 무엇인가?</p>
+
+<div class="card">
+  <h3>먼저 판별 논리 — &ldquo;전원과 제어가 다 죽은 날&rdquo;의 사고실험</h3>
+  <p>LSFT가 소화·감지설비를 끄는 이유는 <b>&ldquo;능동 안전장치가 전부 실패한 최악의 날&rdquo;</b>을 재현하기 위해서다.
+  이 논리를 그대로 판별 기준으로 쓸 수 있다:</p>
+  <div class="callout">
+    <b>판별 질문:</b> &ldquo;정전·제어 상실 상태에서도 이 부품은 제 기능을 하는가?&rdquo;<br>
+    → <b>YES (수동적·passive)</b> = 제품의 일부로서 시험 중에도 그대로 기능 (예: 배리어, 단열재, deflagration panel)<br>
+    → <b>NO (감지→판단→작동 체인 필요·active)</b> = 소방 설비 성격 — 비활성화 대상 (예: suppression, detection)
+  </div>
+  <p>열폭주 전파 방호(thermal runaway propagation protection, TRPP) 요소란 이 중 <b>제품에 통합되어 조건 없이 작동하는 수동적 방호</b>를 가리키는 개념으로 이해하면 된다.
+  단, 6판 원문의 정확한 용어 정의와 분류 목록은 <span class="verify">[원문 검수 필요]</span>. 아래 게임의 &ldquo;그레이존&rdquo; 항목들이 바로 이 경계에 걸친 부품들이다.</p>
+</div>
+
+<div class="card">
+  <h3>분류 게임 — 이 부품, 끄나 남기나?</h3>
+  <p class="muted">각 부품에 대해 판단을 선택하세요. 정답·오답과 함께 근거가 표시됩니다. (8개)</p>
+  <div class="game-score" id="game-score">0 / 8 분류 완료</div>
+
+  <div class="comp-row" data-ans="off">
+    <div class="c-name">컨테이너 소화설비 (클린에이전트 / 워터 미스트)<small>화재 신호를 받아 소화약제를 방출</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="능동 소방 설비의 대표 — 감지→작동 체인으로 동작한다. LSFT는 suppression을 비활성화한 상태로 수행한다."></div>
+  </div>
+  <div class="comp-row" data-ans="off">
+    <div class="c-name">화재 감지설비 (연기·열 감지기 + 수신반)<small>화재를 감지해 경보·연동 신호를 발생</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="detection system은 suppression과 함께 명시적 비활성화 대상이다. 감지 신호로 어떤 완화 동작도 개입해서는 안 된다. (시험용 계측 열전대는 제품 감지설비가 아니므로 별개로 정상 운용)"></div>
+  </div>
+  <div class="comp-row" data-ans="keep">
+    <div class="c-name">Deflagration Panel<small>내부 압력 상승 시 기계적으로 개방되는 패널</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="전원·신호 없이 압력만으로 작동하는 수동적 요소 — 제품 그 자체다. 시험 중에도 그대로 기능하며, 오히려 패널의 실제 개방 거동이 시험의 관찰 대상이 된다."></div>
+  </div>
+  <div class="comp-row" data-ans="keep">
+    <div class="c-name">Rack 간 / Pack 간 방화 배리어·케이스 단열재<small>열전파를 늦추는 물리적 격벽·소재</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="수동적 방호의 전형 — 조건 없이 항상 기능한다. LSFT는 바로 이런 수동적 설계 요소만으로 비전파를 입증하는 시험이다."></div>
+  </div>
+  <div class="comp-row" data-ans="keep">
+    <div class="c-name">Cell 안전 벤트 (셀 자체의 압력 방출 기구)<small>셀 내압 상승 시 개방</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="셀에 내장된 수동 안전 기구로, 제거·비활성화가 애초에 불가능한 제품의 일부다. 당연히 유지된다."></div>
+  </div>
+  <div class="comp-row" data-ans="gray">
+    <div class="c-name">BMS 감시 + 컨택터 차단 기능<small>이상 감지 시 회로를 전기적으로 분리</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="경계에 걸친 항목이다. 감지→판단→작동 체인을 가진 능동 요소지만 소방 설비가 아니라 전기 보호 장치이고, 시험 중 시스템의 통전·SOC 상태 설정과 얽혀 있다. 시험 계획서에서 CB와 상태를 명시적으로 합의해야 한다. [원문 검수 필요]"></div>
+  </div>
+  <div class="comp-row" data-ans="gray">
+    <div class="c-name">Off-gas 감지 연동 배기팬 (LFL 저감 환기)<small>가연성 가스 감지 시 환기 기동</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="감지-작동 체인이 있어 '능동'이지만, 소화 설비가 아니라 폭연 방지 설비다. LSFT(화재 시험)와 폭연 리스크(Annex C 영역)의 경계에 있어 취급이 갈릴 수 있다 — CB 협의 및 원문 확인 대상. [원문 검수 필요]"></div>
+  </div>
+  <div class="comp-row" data-ans="gray">
+    <div class="c-name">Pack 내장 에어로졸 소화 유닛<small>팩 BOM에 포함된 열 감응식 소화 캡슐/유닛</small></div>
+    <div class="cls-btns"><button class="cls-btn" data-v="off">비활성화</button><button class="cls-btn" data-v="keep">유지</button><button class="cls-btn" data-v="gray">그레이존</button></div>
+    <div class="comp-fb" data-fb="TRPP 논쟁의 핵심 사례다. 열 감응식이라 전원 없이 작동(수동적 성격)하지만 기능은 '소화'다. '제품의 일부'로 인정받아 활성 상태로 시험할 수 있는지가 인증 전략의 갈림길 — 반드시 CB와 사전 합의할 것. [원문 검수 필요]"></div>
+  </div>
+
+  <div class="callout blue" style="margin-top:16px"><b>배경 — 왜 이 경계가 중요한가:</b> 그레이존 부품을 &ldquo;끈 상태&rdquo;로 시험해 통과하면 가장 방어력 있는 성적서가 되고,
+  &ldquo;켠 상태&rdquo;로만 통과하면 그 부품이 사실상 인증의 전제 조건이 되어 <b>부품 단종·설계 변경 시 재시험 리스크</b>가 생긴다.
+  분류는 규격 해석 문제이기 전에 인증 전략 문제다.</div>
+</div>
+
+<!-- ============================ ③ target 관통 ============================ -->
+<div class="gray-head" id="g3"><span class="gno">그레이존 ③</span><h2>Target 외피에 구멍이 나면 — 합격인가 불합격인가</h2></div>
+<p class="q-restate">Q. 판정 기준에서, Target Container 외피가 열로 관통(melt-through)되면 그 자체로 불합격인가?</p>
+<div class="tri">
+  <div class="t-sure"><h4>■ 공개 자료로 확실한 것</h4>
+    <ul>
+      <li>판정의 중심축은 <b>Target 내부 배터리의 thermal runaway 발생 또는 위험 온도 도달</b>이다.</li>
+      <li>따라서 &ldquo;구멍 → 내부 가열 → TR 또는 위험 온도&rdquo;로 이어지면 그 시점에 명백한 불합격이다.</li>
+      <li>반대로 외벽 그을음·도장 변색처럼 <b>노출 흔적 자체는 판정 기준이 아니다</b>.</li>
+    </ul>
+  </div>
+  <div class="t-unsure"><h4>▲ 원문·CB 확인이 필요한 것 <span class="verify">[원문 검수 필요]</span></h4>
+    <ul>
+      <li>외피 관통이 TR·온도와 <b>무관하게 독립적인 불합격 사유</b>로 명시되어 있는지 (예: 화염 침입, 개구부 형성 관련 조항).</li>
+      <li>Target의 deflagration panel이 <b>열 때문에 개방</b>된 경우의 취급 — 개구부로 보나, 정상 작동으로 보나.</li>
+    </ul>
+  </div>
+  <div class="t-impl"><h4>● 설계 시사점</h4>
+    <p>사고실험으로 정리하면 아래와 같다. 핵심은 <b>&ldquo;규격상 합부&rdquo;와 &ldquo;평가상 방어력&rdquo;은 별개 층위</b>라는 것 —
+    TR 없이 끝났어도 외피가 뚫린 성적서는 RDP·AHJ 앞에서 &ldquo;마진이 없었다&rdquo;는 증거로 읽힌다.
+    외피 재질·두께는 판정 통과가 아니라 <b>관통 자체가 없는 결과</b>를 목표로 설계하라.</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>케이스</th><th>규격상 판정</th><th>실무 평가</th></tr>
+      <tr><td>관통 발생 + Target 내부 TR 발생</td><td class="res-fail">불합격</td><td>—</td></tr>
+      <tr><td>관통 발생 + TR·위험 온도 없음</td><td class="res-gray">원문 확인 필요</td><td>합격하더라도 RDP·AHJ 방어 취약, 마케팅 스펙으로 쓰기 어려움</td></tr>
+      <tr><td>관통 없음 + 내부 위험 온도 도달</td><td class="res-fail">불합격</td><td>외피가 버텨도 내부 기준 초과면 실패</td></tr>
+      <tr><td>관통 없음 + TR·위험 온도 없음</td><td class="res-pass">합격</td><td>목표 상태</td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ============================ ④ heat flux ============================ -->
+<div class="gray-head" id="g4"><span class="gno">심화 ④</span><h2>Heat Flux는 왜 취득하나 — 온도와 무엇이 다른가</h2></div>
+<p class="q-restate">Q. 판정은 온도로 하는데, heat flux는 왜 굳이 측정하나?</p>
+<div class="card">
+  <p><b>온도(temperature)</b>는 &ldquo;그 지점이 결과적으로 얼마나 뜨거워졌나&rdquo;를 말해주는 <b>결과값</b>이고,
+  <b>heat flux(kW/m²)</b>는 &ldquo;단위 면적에 얼마나 강한 열이 도달하고 있나&rdquo;를 말해주는 <b>노출 강도</b>다.
+  같은 화염이라도 대상물의 열용량·표면 상태에 따라 온도는 달라지지만, flux는 화원과 거리·기하가 만드는 노출 자체를 정량화한다.</p>
+  <div class="qblock">
+    <div class="q"><span class="qno">Q</span>heat flux 데이터의 가장 큰 실익은 무엇일까?</div>
+    <div class="choices">
+      <button class="choice" data-result="wrong"
+        data-fb="<b>오답 — 판정 필수 데이터는 온도입니다.</b>heat flux는 선택 항목이다. 필수가 아니라는 점이 오히려 이 질문의 출발점 — 필수도 아닌데 강력 권장되는 이유가 있다.">
+        <span class="mark">A.</span>비전파 판정의 필수 데이터이기 때문이다</button>
+      <button class="choice" data-result="correct"
+        data-fb="<b>정답 — 외삽(extrapolation)의 근거가 됩니다.</b>시험은 특정 거리 D, 특정 target 1기에서만 수행된다. 거리별 heat flux 프로파일이 있으면 RDP가 다른 이격 거리, 다른 인접물(건물 벽, 변압기, 주차 차량 등)에 대한 노출을 계산으로 평가할 수 있고, 재료별 착화 임계 flux와 비교해 사이트별 배치를 정당화할 수 있다. 온도 데이터만으로는 이 외삽이 어렵다.">
+        <span class="mark">B.</span>시험한 거리·대상 외의 다른 거리·다른 인접물로 평가를 확장(외삽)할 수 있게 해준다</button>
+      <button class="choice" data-result="wrong"
+        data-fb="<b>오답 — 온도와 같은 정보가 아닙니다.</b>온도는 대상물의 응답(결과), flux는 노출의 강도(원인 측)다. 같은 flux라도 대상물에 따라 온도는 다르게 나타나므로, 둘은 서로 대체할 수 없는 별개의 데이터다.">
+        <span class="mark">C.</span>온도와 사실상 같은 정보라서, 열전대의 백업 용도다</button>
+    </div>
+    <div class="feedback" hidden></div>
+  </div>
+  <div class="callout blue"><b>설계자 메모:</b> flux 게이지는 냉각수 공급이 필요한 경우가 많아(수냉식 게이지) 설치 위치·배관이 시험장 셋업 이슈가 된다.
+  계측 계획 단계에서 시험기관과 게이지 타입·위치를 먼저 협의할 것.</div>
+</div>
+
+<!-- ============================ ⑤ 점화원 위치 ============================ -->
+<div class="gray-head" id="g5"><span class="gno">심화 ⑤</span><h2>점화원이 바깥에 있어야 하는 경우는 없나</h2></div>
+<p class="q-restate">Q. Section 10은 내부 점화가 표준인데, 외부 점화가 필요한 경우의 수는?</p>
+<div class="tri">
+  <div class="t-sure"><h4>■ 공개 자료로 확실한 것</h4>
+    <ul>
+      <li>Section 10 LSFT의 방법은 <b>Initiating Container 내부에 developed fire를 형성</b>하는 것이다. 외부 점화는 Section 10의 시나리오가 아니다.</li>
+      <li>이유는 철학에서 나온다: 배터리를 <b>연료원</b>으로 태우는 것이 목적이므로, 연료가 있는 곳(내부)에서 화재가 성장해야 한다. 외벽 가열은 &ldquo;외함 내화 성능&rdquo;이라는 다른 질문에 답하는 시험이 된다.</li>
+      <li>&ldquo;외부 점화가 더 보수적이지 않나&rdquo;는 오개념이다 — 보수성의 방향이 다르다. 내부 화재는 외벽·개구부를 <b>안쪽에서</b> 공격하는 최악이고, 외부 화재는 별개의 노출 시나리오다.</li>
+    </ul>
+  </div>
+  <div class="t-unsure"><h4>▲ 원문·CB 확인이 필요한 것 <span class="verify">[원문 검수 필요]</span></h4>
+    <ul>
+      <li>외부 노출 화재(인접 초지 화재, 차량 화재 등)에 대한 평가가 6판 또는 NFPA 855의 다른 조항·부속서에서 요구되는 경우가 있는지.</li>
+      <li>내부 점화가 물리적으로 곤란한 특수 구조(초고밀도 팩킹 등)에 대한 대체 절차 존재 여부.</li>
+    </ul>
+  </div>
+  <div class="t-impl"><h4>● 설계 시사점</h4>
+    <p>사이트 인허가에서 외부 화재 노출(주변 초지, 인접 설비) 질의가 나오면 LSFT 성적서로 답하려 하지 말 것 —
+    질문의 층위가 다르다. 그때 쓰라고 있는 것이 <b>heat flux 데이터와 이격 거리 논리</b>(④)이고,
+    부지 방화대(fire break)·이격은 사이트 설계 영역이다.</p>
+  </div>
+</div>
+
+<!-- ============================ ⑥ target full form ============================ -->
+<div class="gray-head" id="g6"><span class="gno">심화 ⑥</span><h2>Target을 Full Form으로 하지 않으면 — 무엇이 불리해지나</h2></div>
+<p class="q-restate">Q. Target Container를 실제 양산 구성(전체 랙·팩 탑재)이 아닌 부분 탑재로 시험하면 인증에서 뭐가 불리한가?</p>
+<div class="tri">
+  <div class="t-sure"><h4>■ 논리적으로 확실한 것</h4>
+    <ul>
+      <li>판정 자체가 <b>&ldquo;Target 내부 배터리의 TR 여부&rdquo;</b>다. 배터리가 부분 탑재면 판정의 대표성이 근본에서 흔들린다.</li>
+      <li>탑재량이 다르면 <b>열용량과 내부 온도 거동이 달라진다</b> — 부분 탑재 target은 실제 제품보다 빨리 데워질 수도, 늦게 데워질 수도 있어 결과를 양산 구성으로 환산할 근거가 약하다.</li>
+      <li>성적서의 문장이 약해진다: &ldquo;양산 구성에서 비전파&rdquo;가 아니라 &ldquo;시험 구성에서 비전파&rdquo;가 되고, 그 차이는 AHJ 질의·고객 기술 실사에서 반드시 파고들리는 지점이다.</li>
+    </ul>
+  </div>
+  <div class="t-unsure"><h4>▲ 원문·CB 확인이 필요한 것 <span class="verify">[원문 검수 필요]</span></h4>
+    <ul>
+      <li>Target 구성 요건 — 완전 탑재 필수인지, 대표 구성·부분 탑재가 조건부 허용되는지, 허용 시 계측 보강 요구가 있는지.</li>
+      <li>Initiating과 Target의 구성 일치 요구 여부.</li>
+    </ul>
+  </div>
+  <div class="t-impl"><h4>● 설계 시사점</h4>
+    <p>부분 탑재의 유혹은 비용(셀·팩 값)에서 온다. 그러나 이 시험은 컨테이너 2기 규모의 일회성 투자이고,
+    <b>성적서의 수명은 제품 수명과 같다.</b> target 구성에서 아낀 비용이 사이트마다의 질의 대응·조건부 승인·재시험 리스크로 돌아오면 계산이 뒤집힌다.
+    시험 예산 품의 단계에서 &ldquo;full form target&rdquo;을 기본안으로 올리고, 축소안은 CB 서면 합의가 있을 때만 검토하라.</p>
+  </div>
+</div>
+
+<!-- ============================ ⑦ 시험의 빈틈 ============================ -->
+<div class="gray-head" id="gaps"><span class="gno">비판적 독해 ⑦</span><h2>이 시험이 못 보는 것들 — LSFT의 구조적 한계</h2></div>
+<p class="q-restate">합격 성적서를 받은 뒤에도 설계자가 계속 짊어져야 하는 리스크 목록이다.
+LSFT를 &ldquo;안전의 증명&rdquo;이 아니라 &ldquo;특정 시나리오 하나의 통과&rdquo;로 읽는 훈련.</p>
+
+<div class="gap"><div class="g-no">1</div><div>
+  <div class="g-t">바람은 하루치 스냅샷이다</div>
+  <div>시험일의 풍속·풍향 조건 하나로 성적서가 만들어진다. 무풍에 가까운 날의 통과 결과가 강풍 사이트에 적용될 수 있는지는 전적으로 RDP의 외삽 판단에 달린다.</div>
+  <div class="g-im">시험일 기상을 &ldquo;운&rdquo;에 맡기지 말고, 목표 사이트 포트폴리오의 풍속 분포를 미리 보고 시험 조건·계측 계획을 세울 것.</div>
+</div></div>
+<div class="gap"><div class="g-no">2</div><div>
+  <div class="g-t">화재 경로만 보고, 폭연 경로는 건너뛴다</div>
+  <div>실제 대형 사고의 상당수는 &ldquo;타다 만 상태 + 가연성 가스 축적 + 지연 착화 → 폭연&rdquo; 경로였다. 완전 연소를 전제하는 LSFT는 역설적으로 이 경로를 지나친다. Annex C가 있지만 별도 트랙이다.</div>
+  <div class="g-im">LSFT 합격과 폭연 안전은 별개 숙제 — deflagration panel·LFL 환기 설계를 LSFT 준비와 병행할 것.</div>
+</div></div>
+<div class="gap"><div class="g-no">3</div><div>
+  <div class="g-t">Target의 Target이 없다</div>
+  <div>1:1 비전파만 입증한다. 실제 어레이에서는 한 컨테이너가 양옆·코너의 여러 화원에서 동시에 복사열을 받을 수 있는데, 이 누적 노출은 시험 밖이다.</div>
+  <div class="g-im">어레이 배치 설계 시 단순 D 간격 복제가 아니라 코너·통로 끝 배치의 view factor 누적을 별도 검토할 것. (④의 heat flux 데이터가 이때 쓰인다)</div>
+</div></div>
+<div class="gap"><div class="g-no">4</div><div>
+  <div class="g-t">시험품은 신품이다</div>
+  <div>수년 운전 후의 열화 셀, 불균형 팩, 실링 열화(수분 침투 — 1~5판을 뒤집은 바로 그 원인)의 거동은 신품 시험에 반영되지 않는다.</div>
+  <div class="g-im">수명 후반 상태의 안전 마진은 시험이 아니라 설계(열화 진단, 실링 내구, 유지보수 접근성)로 확보해야 한다.</div>
+</div></div>
+<div class="gap"><div class="g-no">5</div><div>
+  <div class="g-t">전파 경로가 복사열만 있는 게 아니다</div>
+  <div>실제 사이트에는 컨테이너 간 케이블 트렌치, 공용 트레이, 배관이 있고 이들이 화염·고온 가스·용융물의 통로가 될 수 있다. 표준 시험 배치에는 보통 이런 연결이 없다.</div>
+  <div class="g-im">사이트 설계에서 컨테이너 간 관통부의 방화 구획(fire stop)을 별도 사양으로 관리할 것 — LSFT 성적서가 커버해 주지 않는다.</div>
+</div></div>
+<div class="gap"><div class="g-no">6</div><div>
+  <div class="g-t">소방대가 물을 뿌리는 상황은 어느 시험에도 없다</div>
+  <div>disengage는 화재 성장 관점에서 보수적이지만, 역으로 실제 대응 상황(고전압부 주수, 수증기 폭발성, 소방 접근 동선)은 어떤 인증 시험도 재현하지 않는 공백으로 남는다.</div>
+  <div class="g-im">Emergency Response Plan과 소방 접근 설계(차단기 위치 표지, 접근로, 주수 금지 구역)는 시험과 무관하게 설계자가 채워야 할 몫이다.</div>
+</div></div>
+<div class="gap"><div class="g-no">7</div><div>
+  <div class="g-t">n = 1</div>
+  <div>컨테이너 전소 시험은 반복 불가능한 단일 표본이다. 제조 산포·조립 편차·시공 품질이 결과에 미치는 영향을 통계적으로 말할 수 없다.</div>
+  <div class="g-im">시험 통과 마진을 &ldquo;온도가 기준 대비 얼마나 여유 있었나&rdquo;로 정량 기록해 두고, 양산 품질 관리 항목(실링, 배리어 조립)과 연결해 관리할 것.</div>
+</div></div>
+
+<div class="callout" style="margin-top:24px"><b>맺음:</b> LSFT는 &ldquo;컨테이너 1기를 잃는 날&rdquo;에 대한 좋은 시험이지만, 그날의 모든 것을 보는 시험은 아니다.
+성적서가 답하는 질문과 답하지 않는 질문을 구분하는 것 — 그것이 이 심화 과정의 목적이다.</div>
+
+<p style="margin-top:28px"><a class="next-step" href="index.html" style="text-decoration:none">← 기초 과정(Rev.1)으로 돌아가기</a></p>
+
+</main>
+
+<footer>
+  <span>UL 9540A 6판 Section 10 LSFT · Rev.2 심화(그레이존 파일) · 사내 교육용 · 미확정 항목은 원문 검수 후 갱신 예정</span>
+</footer>
+
+<script>
+// 분류 게임
+let done=0;
+const rows=document.querySelectorAll('.comp-row');
+rows.forEach(row=>{
+  const ans=row.dataset.ans;
+  const fb=row.querySelector('.comp-fb');
+  row.querySelectorAll('.cls-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(row.classList.contains('answered'))return;
+      row.classList.add('answered');
+      const right=btn.dataset.v===ans;
+      btn.classList.add('picked',right?'right':'wrong');
+      const label={off:'비활성화',keep:'유지',gray:'그레이존'}[ans];
+      fb.textContent=(right?'정답 — ':'오답 — 분류: '+label+'. ')+fb.dataset.fb;
+      fb.classList.add('show',right?'ok':'no');
+      done++;
+      document.getElementById('game-score').textContent=done+' / '+rows.length+' 분류 완료'+(done===rows.length?' — 완료!':'');
+    });
+  });
+});
+// heat flux 퀴즈 (기초와 동일 메커니즘)
+document.querySelectorAll('.qblock').forEach(qb=>{
+  const fb=qb.querySelector('.feedback');
+  qb.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const r=btn.dataset.result;
+      qb.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel-ok','sel-no'));
+      btn.classList.add(r==='correct'?'sel-ok':'sel-no');
+      fb.hidden=false;
+      fb.className='feedback '+(r==='correct'?'ok':'no');
+      fb.innerHTML=btn.dataset.fb;
+    });
+  });
+});
+</script>
+</body>
+</html>

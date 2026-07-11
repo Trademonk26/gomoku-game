@@ -5,7 +5,8 @@ Installation Level Large-Scale Fire Test (LSFT) 인터랙티브 교육자료.
 
 ## 실행
 
-`index.html`을 브라우저로 열면 끝. 외부 의존성 없는 단일 HTML 파일이다.
+`index.html`(기초, Rev.1)을 브라우저로 열면 끝. 외부 의존성 없는 단일 HTML 파일이다.
+심화 과정은 `advanced.html`(Rev.2) — index 헤더/부록에서 링크로 연결된다.
 
 ## 구성
 
@@ -16,6 +17,20 @@ Installation Level Large-Scale Fire Test (LSFT) 인터랙티브 교육자료.
 | STEP 3 | 판정 기준 — Non-propagation, RDP 평가(NFPA 855 §9.2.2.2), Annex C 연계 |
 | STEP 4 | 설계 반영 체크리스트 5항목 (체크 상태 localStorage 저장) |
 | 부록 | 제외 범위(실내·벽면 인접·적층·주거용), SVG 컴포넌트, 근거자료 |
+
+## Rev.2 심화 — advanced.html (그레이존 파일)
+
+기초와 달리 "확정 지식"이 아닌 "판단 훈련"용. 미확정 내용은 확정처럼 쓰지 않는 것이 원칙.
+
+| 섹션 | 내용 | 형식 |
+|---|---|---|
+| ① | Developed fire의 범위 (전체 전소 vs 랙 종대) | 3단 카드(확실/미확정/시사점) |
+| ② | TRPP vs 소방 설비 경계 | 부품 8종 분류 게임 (끄나/남기나/그레이) |
+| ③ | Target 외피 관통 시 합부 | 3단 카드 + 4케이스 사고실험 표 |
+| ④ | Heat flux의 실익 | 정답형 퀴즈 (외삽 근거) |
+| ⑤ | 점화원 위치 (내부 점화가 표준인 이유) | 3단 카드 |
+| ⑥ | Target full form 미적용 시 불리한 점 | 3단 카드 |
+| ⑦ | 이 시험이 못 보는 것들 — LSFT 구조적 한계 7가지 | 비판적 독해 카드 |
 
 ## 검수자 확인 사항
 
