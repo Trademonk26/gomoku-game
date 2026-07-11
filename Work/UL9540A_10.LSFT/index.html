@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="UL 9540A 6판 Section 10 Installation Level Large-Scale Fire Test 셀프 러닝 교육자료">
+  <title>UL 9540A Ed.6 · Section 10 LSFT Design Lab</title>
+  <style>
+    :root {
+      --ink: #f3f6f8;
+      --muted: #a9b3bb;
+      --dim: #77838d;
+      --bg: #0a0d10;
+      --panel: #12171b;
+      --panel-2: #171e23;
+      --line: #2b363e;
+      --line-soft: #20292f;
+      --orange: #ff6b2c;
+      --orange-soft: rgba(255, 107, 44, .14);
+      --cyan: #57d7e5;
+      --cyan-soft: rgba(87, 215, 229, .12);
+      --green: #7cdb9b;
+      --green-soft: rgba(124, 219, 155, .12);
+      --red: #ff7d73;
+      --red-soft: rgba(255, 125, 115, .12);
+      --yellow: #f6c85f;
+      --radius: 18px;
+      --shadow: 0 22px 70px rgba(0, 0, 0, .28);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+        var(--bg);
+      background-size: 36px 36px;
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.62;
+      word-break: keep-all;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: var(--cyan); }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .app { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(10, 13, 16, .86);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .topbar-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 230px; }
+    .brand-mark {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      background: var(--orange);
+      color: #180b06;
+      font: 800 12px/1 var(--mono);
+      border-radius: 9px;
+      box-shadow: 0 0 30px rgba(255,107,44,.24);
+    }
+    .brand strong { display: block; font-size: 14px; letter-spacing: .02em; }
+    .brand small { display: block; color: var(--dim); font: 11px/1.2 var(--mono); margin-top: 3px; }
+    .progress-wrap { flex: 1; display: flex; align-items: center; gap: 14px; }
+    .progress-track { flex: 1; height: 5px; background: var(--line-soft); border-radius: 999px; overflow: hidden; }
+    .progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, var(--orange), var(--yellow)); transition: width .45s ease; }
+    .progress-label { color: var(--muted); font: 12px/1 var(--mono); white-space: nowrap; }
+
+    .hero {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 88px 0 44px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 54px;
+      align-items: center;
+    }
+    .eyebrow { color: var(--orange); font: 700 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 16px 0 22px; font-size: clamp(40px, 7vw, 82px); line-height: .97; letter-spacing: -.055em; max-width: 800px; }
+    h1 span { display: block; color: var(--muted); font-size: .46em; letter-spacing: -.02em; line-height: 1.25; margin-top: 14px; }
+    .hero-copy { max-width: 700px; color: var(--muted); font-size: clamp(16px, 2vw, 20px); }
+    .hero-copy strong { color: var(--ink); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .pill { border: 1px solid var(--line); border-radius: 999px; padding: 7px 11px; color: var(--muted); font: 12px/1 var(--mono); background: rgba(255,255,255,.02); }
+    .pill.orange { border-color: rgba(255,107,44,.45); color: #ff9b71; background: var(--orange-soft); }
+
+    .hero-visual { position: relative; min-height: 420px; }
+    .hero-visual::before { content: ""; position: absolute; inset: 12% 4%; background: radial-gradient(circle, rgba(255,107,44,.18), transparent 60%); filter: blur(20px); }
+    .hero-visual svg { width: 100%; height: auto; position: relative; filter: drop-shadow(0 26px 28px rgba(0,0,0,.35)); }
+    .pulse-ring { transform-origin: center; animation: pulse 2.8s ease-out infinite; }
+    @keyframes pulse { 0% { opacity: .7; transform: scale(.84); } 80%,100% { opacity: 0; transform: scale(1.25); } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pulse-ring { animation: none; } * { transition-duration: .01ms !important; } }
+
+    .step-nav {
+      width: min(1180px, calc(100% - 32px));
+      margin: 12px auto 0;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: rgba(18,23,27,.92);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .step-tab {
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      padding: 13px 14px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--dim);
+      transition: background .2s ease, color .2s ease;
+    }
+    .step-tab:hover { background: rgba(255,255,255,.04); color: var(--ink); }
+    .step-tab:disabled { opacity: .42; cursor: not-allowed; }
+    .step-tab:disabled:hover { background: transparent; color: var(--dim); }
+    .step-tab.is-active { background: var(--orange-soft); color: var(--ink); }
+    .step-tab.is-complete { color: var(--green); }
+    .step-tab b { display: block; font: 11px/1 var(--mono); letter-spacing: .08em; color: inherit; margin-bottom: 6px; }
+    .step-tab span { display: block; font-size: 14px; font-weight: 700; }
+
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 120px; }
+    .step-panel { display: none; animation: panelIn .4s ease; }
+    .step-panel.is-active { display: block; }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .section-head { display: grid; grid-template-columns: 180px 1fr; gap: 28px; padding: 60px 0 34px; align-items: start; }
+    .step-no { color: var(--orange); font: 700 12px/1 var(--mono); letter-spacing: .12em; }
+    .section-head h2 { margin: 0 0 12px; font-size: clamp(30px, 5vw, 54px); line-height: 1.08; letter-spacing: -.035em; }
+    .section-head p { margin: 0; color: var(--muted); max-width: 800px; font-size: 17px; }
+    .term { color: var(--ink); font-weight: 700; }
+    .term em { color: var(--cyan); font: normal 12px/1 var(--mono); margin-left: 4px; }
+
+    .card { background: linear-gradient(150deg, rgba(23,30,35,.96), rgba(17,22,26,.98)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .flow-compare { display: grid; grid-template-columns: 1fr 64px 1fr; gap: 18px; align-items: stretch; }
+    .flow-card { padding: 30px; overflow: hidden; position: relative; }
+    .flow-card::after { content: ""; position: absolute; width: 130px; height: 130px; border: 1px solid var(--line); border-radius: 50%; right: -60px; top: -60px; }
+    .flow-card.after { border-color: rgba(255,107,44,.55); }
+    .flow-kicker { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 26px; }
+    .flow-kicker strong { font: 14px/1 var(--mono); }
+    .edition { color: var(--dim); font: 11px/1 var(--mono); }
+    .flow { display: grid; grid-template-columns: repeat(7, minmax(0, auto)); align-items: center; gap: 6px; }
+    .flow-node { min-width: 58px; padding: 12px 7px; border-radius: 9px; border: 1px solid var(--line); text-align: center; background: rgba(255,255,255,.025); font: 700 12px/1.2 var(--mono); }
+    .flow-node small { display: block; color: var(--dim); font: 10px/1.25 var(--sans); margin-top: 5px; }
+    .flow-node.hot { border-color: var(--orange); background: var(--orange-soft); }
+    .flow-node.ghost { border-style: dashed; color: var(--dim); position: relative; }
+    .removed-label { position: absolute; inset: -7px auto auto 50%; transform: translateX(-50%); background: var(--red); color: #1b0806; padding: 2px 5px; border-radius: 3px; font: 8px/1 var(--mono); }
+    .flow-arrow { color: var(--dim); text-align: center; }
+    .transform-arrow { display: grid; place-items: center; color: var(--orange); font-size: 28px; }
+    .flow-note { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 14px; }
+    .flow-note strong { color: var(--ink); }
+
+    .insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 20px; }
+    .insight { padding: 25px; }
+    .insight .num { color: var(--orange); font: 12px/1 var(--mono); }
+    .insight h3 { margin: 15px 0 8px; font-size: 20px; }
+    .insight p { margin: 0; color: var(--muted); font-size: 14px; }
+    .design-cue { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--line-soft); color: var(--cyan); font-size: 13px; }
+    .fuel-shift { margin-top: 20px; display: grid; grid-template-columns: .95fr 1.05fr; overflow: hidden; }
+    .fuel-copy { padding: 36px; }
+    .fuel-copy h3 { margin: 0 0 15px; font-size: 28px; line-height: 1.2; }
+    .fuel-copy p { color: var(--muted); margin: 0 0 18px; }
+    .quote-line { border-left: 3px solid var(--orange); padding-left: 16px; color: var(--ink); }
+    .fuel-visual { min-height: 300px; background: radial-gradient(circle at 50% 65%, rgba(255,107,44,.22), transparent 55%), #0e1317; display: grid; place-items: center; padding: 18px; border-left: 1px solid var(--line); }
+    .fuel-visual svg { width: 100%; max-height: 310px; }
+
+    .action-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 32px; }
+    .btn { border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); color: var(--ink); padding: 12px 18px; cursor: pointer; font-weight: 700; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--dim); }
+    .btn.primary { background: var(--orange); border-color: var(--orange); color: #1c0c05; }
+    .btn.primary:hover { background: #ff824d; }
+    .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+    .scenario-shell { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+    .scenario-rail { position: sticky; top: 92px; padding: 18px; }
+    .scenario-rail h3 { margin: 4px 8px 16px; font-size: 14px; color: var(--muted); }
+    .axis-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+    .axis-button { width: 100%; display: grid; grid-template-columns: 30px 1fr 18px; gap: 8px; align-items: center; border: 0; border-radius: 10px; background: transparent; color: var(--dim); padding: 10px; text-align: left; cursor: pointer; }
+    .axis-button:disabled { cursor: not-allowed; opacity: .4; }
+    .axis-button.is-current { background: var(--orange-soft); color: var(--ink); }
+    .axis-button.is-done { color: var(--green); }
+    .axis-index { font: 11px/1 var(--mono); }
+    .axis-label { font-size: 13px; line-height: 1.35; }
+    .axis-state { font-size: 14px; text-align: center; }
+    .lab-panel { overflow: hidden; }
+    .lab-stage { min-height: 410px; background: #0d1215; border-bottom: 1px solid var(--line); position: relative; display: grid; place-items: center; padding: 20px; }
+    .lab-stage svg { width: min(100%, 760px); max-height: 390px; }
+    .stage-label { position: absolute; top: 18px; left: 20px; padding: 6px 9px; background: rgba(10,13,16,.82); border: 1px solid var(--line); border-radius: 6px; color: var(--muted); font: 11px/1 var(--mono); }
+    .stage-photo-slot { position: absolute; right: 18px; bottom: 18px; width: 158px; aspect-ratio: 4/3; border: 1px dashed var(--dim); background: rgba(10,13,16,.85); border-radius: 8px; display: grid; place-items: center; text-align: center; color: var(--dim); font: 10px/1.4 var(--mono); padding: 12px; }
+    .lab-copy { padding: 28px; }
+    .axis-eyebrow { color: var(--orange); font: 11px/1 var(--mono); letter-spacing: .09em; }
+    .lab-copy h3 { margin: 10px 0 8px; font-size: clamp(23px, 4vw, 34px); line-height: 1.2; }
+    .lab-copy > p { color: var(--muted); margin: 0 0 22px; }
+    .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .choice { border: 1px solid var(--line); background: rgba(255,255,255,.02); border-radius: 12px; padding: 16px; text-align: left; cursor: pointer; min-height: 120px; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
+    .choice:hover { border-color: var(--dim); transform: translateY(-1px); }
+    .choice strong { display: block; font-size: 14px; line-height: 1.45; }
+    .choice span { display: block; margin-top: 7px; color: var(--dim); font-size: 12px; line-height: 1.45; }
+    .choice.is-correct { border-color: var(--green); background: var(--green-soft); }
+    .choice.is-wrong { border-color: var(--red); background: var(--red-soft); }
+    .choice:disabled { cursor: default; transform: none; }
+    .feedback { display: none; margin-top: 16px; padding: 16px 18px; border-radius: 12px; border: 1px solid var(--line); font-size: 14px; }
+    .feedback.is-visible { display: block; animation: panelIn .24s ease; }
+    .feedback.correct { border-color: rgba(124,219,155,.45); background: var(--green-soft); }
+    .feedback.wrong { border-color: rgba(255,125,115,.45); background: var(--red-soft); }
+    .feedback strong { display: block; margin-bottom: 4px; }
+    .feedback p { margin: 0; color: var(--muted); }
+    .feedback.wrong strong { color: var(--red); }
+    .feedback.correct strong { color: var(--green); }
+    .axis-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; }
+    .axis-progress { color: var(--dim); font: 11px/1 var(--mono); }
+
+    .criteria-visual { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 16px; align-items: center; padding: 26px; }
+    .container-chip { min-height: 270px; border: 1px solid var(--line); border-radius: 14px; display: grid; place-items: center; padding: 22px; text-align: center; background: rgba(255,255,255,.018); }
+    .container-chip svg { width: 100%; max-width: 220px; }
+    .container-chip h3 { margin: 18px 0 5px; font-size: 17px; }
+    .container-chip p { margin: 0; color: var(--dim); font-size: 12px; }
+    .criterion-core { text-align: center; padding: 20px; }
+    .criterion-core .line { display: flex; align-items: center; gap: 8px; margin: 14px 0; }
+    .criterion-core .line::before, .criterion-core .line::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .criterion-core .no-prop { color: var(--green); font: 800 clamp(25px,4vw,42px)/1.05 var(--sans); letter-spacing: -.04em; }
+    .criterion-core p { color: var(--muted); font-size: 14px; }
+    .criterion-equation { margin: 26px 0 0; padding: 20px; border-left: 3px solid var(--green); background: var(--green-soft); }
+    .criterion-equation strong { display: block; font-size: 20px; }
+    .criterion-equation span { color: var(--muted); }
+    .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
+    .criteria-item { padding: 23px; }
+    .criteria-item b { display: block; color: var(--cyan); font: 11px/1 var(--mono); margin-bottom: 12px; }
+    .criteria-item h3 { margin: 0 0 8px; font-size: 17px; }
+    .criteria-item p { margin: 0; color: var(--muted); font-size: 13px; }
+    .warning-strip { margin-top: 18px; padding: 22px; border: 1px solid rgba(246,200,95,.42); background: rgba(246,200,95,.08); border-radius: 14px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; }
+    .warning-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--yellow); color: #1a1304; display: grid; place-items: center; font-weight: 900; }
+    .warning-strip h3 { margin: 0 0 5px; font-size: 16px; }
+    .warning-strip p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .takeaway-layout { display: grid; grid-template-columns: 1.35fr .65fr; gap: 20px; align-items: start; }
+    .checklist { padding: 10px 26px; }
+    .check-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: start; padding: 22px 0; border-bottom: 1px solid var(--line-soft); }
+    .check-row:last-child { border-bottom: 0; }
+    .check-row input { width: 20px; height: 20px; accent-color: var(--orange); margin-top: 3px; }
+    .check-row label { cursor: pointer; }
+    .check-row h3 { margin: 0 0 6px; font-size: 17px; }
+    .check-row p { margin: 0; color: var(--muted); font-size: 13px; }
+    .why { color: var(--cyan); font: 10px/1 var(--mono); border: 1px solid rgba(87,215,229,.3); border-radius: 999px; padding: 5px 8px; white-space: nowrap; margin-top: 1px; }
+    .system-map { padding: 20px; position: sticky; top: 92px; }
+    .system-map h3 { margin: 0 0 5px; font-size: 16px; }
+    .system-map > p { margin: 0 0 15px; color: var(--dim); font-size: 12px; }
+    .system-map svg { width: 100%; height: auto; background: #0d1215; border-radius: 12px; border: 1px solid var(--line-soft); }
+    .check-note { margin-top: 16px; color: var(--dim); font-size: 12px; }
+
+    .exclusions { margin-top: 38px; padding: 28px; }
+    .exclusions h3 { margin: 0 0 8px; font-size: 22px; }
+    .exclusions > p { margin: 0 0 18px; color: var(--muted); }
+    .exclusion-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .exclusion { border: 1px dashed var(--line); border-radius: 10px; padding: 16px; color: var(--dim); text-decoration: line-through; text-decoration-color: var(--red); }
+    .exclusion strong { display: block; color: var(--muted); text-decoration: none; font-size: 14px; }
+
+    .sources { margin-top: 18px; padding: 28px; }
+    .sources summary { cursor: pointer; font-weight: 700; }
+    .sources ul { margin: 18px 0 0; padding-left: 20px; color: var(--muted); font-size: 13px; }
+    .sources li + li { margin-top: 9px; }
+    .review-note { margin-top: 18px; color: var(--dim); font-size: 12px; }
+    footer { width: min(1180px, calc(100% - 32px)); margin: -70px auto 0; padding: 0 0 40px; color: var(--dim); font: 11px/1.6 var(--mono); }
+
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; padding-top: 64px; }
+      .hero-visual { min-height: auto; max-width: 620px; }
+      .section-head { grid-template-columns: 110px 1fr; }
+      .flow-compare { grid-template-columns: 1fr; }
+      .transform-arrow { transform: rotate(90deg); min-height: 36px; }
+      .scenario-shell, .takeaway-layout { grid-template-columns: 1fr; }
+      .scenario-rail, .system-map { position: static; }
+      .axis-list { grid-template-columns: repeat(3, 1fr); }
+      .criteria-visual { grid-template-columns: 1fr; }
+      .criterion-core { order: -1; }
+      .container-chip { min-height: 220px; }
+      .system-map { max-width: 620px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-inner { min-height: 60px; }
+      .brand { min-width: 0; }
+      .brand div:last-child { display: none; }
+      .hero { padding-top: 48px; gap: 24px; }
+      .hero-visual { display: none; }
+      .step-nav { grid-template-columns: repeat(4, minmax(0,1fr)); padding: 8px; }
+      .step-tab { padding: 10px 7px; text-align: center; }
+      .step-tab span { font-size: 11px; line-height: 1.25; }
+      .section-head { grid-template-columns: 1fr; gap: 10px; padding-top: 44px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); }
+      .insight-grid, .criteria-grid, .exclusion-list { grid-template-columns: 1fr; }
+      .fuel-shift { grid-template-columns: 1fr; }
+      .fuel-visual { border-left: 0; border-top: 1px solid var(--line); }
+      .axis-list { grid-template-columns: 1fr 1fr; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .choice { min-height: auto; }
+      .lab-stage { min-height: 300px; }
+      .stage-photo-slot { width: 120px; }
+      .check-row { grid-template-columns: 30px 1fr; }
+      .why { grid-column: 2; justify-self: start; }
+    }
+    @media (max-width: 430px) {
+      .progress-label { display: none; }
+      .topbar-inner, .hero, .step-nav, main, footer { width: min(100% - 20px, 1180px); }
+      h1 { font-size: 42px; }
+      .step-tab b { font-size: 9px; }
+      .step-tab span { font-size: 10px; }
+      .flow-card, .fuel-copy, .lab-copy, .criteria-visual, .checklist, .exclusions, .sources { padding-left: 18px; padding-right: 18px; }
+      .axis-list { grid-template-columns: 1fr; }
+      .stage-photo-slot { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand" aria-label="UL 9540A LSFT Design Lab">
+          <div class="brand-mark">10</div>
+          <div><strong>LSFT Design Lab</strong><small>UL 9540A · ED.6 / 2026.03</small></div>
+        </div>
+        <div class="progress-wrap" aria-label="학습 진행률">
+          <div class="progress-track"><div class="progress-bar" id="globalProgress"></div></div>
+          <span class="progress-label" id="progressLabel">STEP 1 / 4</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Installation Level · Large-Scale Fire Test</div>
+        <h1 id="page-title">Burn one.<br>Protect the next.<span>컨테이너 1기의 완전 연소를 전제로,<br>인접 시스템의 비전파를 설계한다.</span></h1>
+        <p class="hero-copy">EV 배터리 설계의 질문이 <strong>“Cell을 어떻게 지킬 것인가?”</strong>였다면, Section 10의 질문은 <strong>“하나가 전소될 때 다음 컨테이너를 어떻게 지킬 것인가?”</strong>입니다.</p>
+        <div class="hero-meta">
+          <span class="pill orange">ANSI/CAN/UL 9540A:2026</span>
+          <span class="pill">OUTDOOR</span>
+          <span class="pill">SINGLE-LAYER</span>
+          <span class="pill">CONTAINER BESS</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 620 500">
+          <defs>
+            <linearGradient id="heroSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#253039"/><stop offset="1" stop-color="#12191e"/></linearGradient>
+            <linearGradient id="heroTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#394851"/><stop offset="1" stop-color="#202a31"/></linearGradient>
+            <linearGradient id="fire" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#ff6b2c"/><stop offset=".55" stop-color="#f6c85f"/><stop offset="1" stop-color="#fff0ac"/></linearGradient>
+          </defs>
+          <path d="M44 388 296 246l280 150-254 74z" fill="#0f1519" stroke="#2b363e"/>
+          <g transform="translate(54 106)">
+            <path d="M0 92 146 16l150 78-146 76z" fill="url(#heroTop)" stroke="#4a5b65"/>
+            <path d="M0 92v145l150 77V170z" fill="#182127" stroke="#34434c"/>
+            <path d="M150 170v144l146-76V94z" fill="url(#heroSide)" stroke="#34434c"/>
+            <g stroke="#34434c"><path d="M24 105v141M52 91v169M82 76v199M112 60v230"/><path d="M180 156v142M209 141v141M238 126v141M267 111v141"/></g>
+            <path d="M31 170 72 192v58l-41-21z" fill="#0c1114" stroke="#57d7e5"/>
+            <text x="47" y="211" fill="#57d7e5" font-size="10" font-family="monospace">TARGET</text>
+          </g>
+          <g transform="translate(324 198)">
+            <path d="M0 73 112 15l116 61-112 58z" fill="#4a3126" stroke="#ff6b2c"/>
+            <path d="M0 73v110l116 60V134z" fill="#2e1d17" stroke="#ff6b2c"/>
+            <path d="M116 134v109l112-58V76z" fill="#3c271e" stroke="#ff6b2c"/>
+            <g stroke="#ff6b2c" opacity=".55"><path d="M25 86v109M52 72v137M79 58v165"/><path d="M143 120v109M170 106v109M198 91v109"/></g>
+            <path d="M85 67c-28-34 8-48 3-72 31 22 22 42 36 52 21-31 45-4 31 25 24 18 10 54-18 65-43 17-86-19-52-70z" fill="url(#fire)"/>
+            <text x="44" y="177" fill="#ff9b71" font-size="11" font-family="monospace">INITIATING</text>
+          </g>
+          <g fill="none" stroke="#ff6b2c" opacity=".6" class="pulse-ring"><ellipse cx="440" cy="340" rx="142" ry="70"/><ellipse cx="440" cy="340" rx="112" ry="54"/></g>
+          <path d="M293 370h92" stroke="#57d7e5" stroke-width="2" stroke-dasharray="7 6"/>
+          <path d="m300 364-12 6 12 6M378 364l12 6-12 6" fill="none" stroke="#57d7e5" stroke-width="2"/>
+          <text x="315" y="357" fill="#57d7e5" font-size="12" font-family="monospace">S_min</text>
+        </svg>
+      </div>
+    </section>
+
+    <nav class="step-nav" aria-label="교육 단계">
+      <button class="step-tab is-active" data-step-target="1"><b>STEP 01</b><span>Why LSFT?</span></button>
+      <button class="step-tab" data-step-target="2"><b>STEP 02</b><span>시험 체험</span></button>
+      <button class="step-tab" data-step-target="3"><b>STEP 03</b><span>판정 기준</span></button>
+      <button class="step-tab" data-step-target="4"><b>STEP 04</b><span>설계 반영</span></button>
+    </nav>
+
+    <main>
+      <section class="step-panel is-active" id="step-1" aria-labelledby="step1-title">
+        <div class="section-head">
+          <div class="step-no">01 — CONTEXT</div>
+          <div><h2 id="step1-title">Why LSFT?</h2><p>6판의 가장 큰 변화부터 시작합니다. 비주거용 BESS는 <span class="term">Rack <em>UNIT</em></span> 시험을 건너뛰고 <span class="term">Pack <em>MODULE</em></span> 다음에 곧바로 Installation Level LSFT로 이동합니다.</p></div>
+        </div>
+
+        <div class="flow-compare">
+          <article class="flow-card card">
+            <div class="flow-kicker"><strong>BEFORE</strong><span class="edition">ED.1—5 · SEQUENTIAL</span></div>
+            <div class="flow" aria-label="기존 시험 흐름">
+              <div class="flow-node">CELL<small>Cell</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node">PACK<small>Module</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node">RACK<small>Unit</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node">INSTALL<small>Installation</small></div>
+            </div>
+            <p class="flow-note">Cell → Pack → Rack → Installation의 <strong>순차 확대 시험</strong></p>
+          </article>
+          <div class="transform-arrow" aria-hidden="true">→</div>
+          <article class="flow-card card after">
+            <div class="flow-kicker"><strong>AFTER</strong><span class="edition">ED.6 · NON-RESIDENTIAL</span></div>
+            <div class="flow" aria-label="6판 비주거용 시험 흐름">
+              <div class="flow-node">CELL<small>Cell</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node">PACK<small>Module</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node ghost"><span class="removed-label" aria-hidden="true">REMOVED</span>RACK<small>Unit</small></div><div class="flow-arrow">→</div>
+              <div class="flow-node hot">LSFT<small>Section 10</small></div>
+            </div>
+            <p class="flow-note"><strong>Pack 다음은 실제 설치 스케일.</strong> 단, residential BESS 및 일부 active TRPP system에는 Rack 시험이 적용될 수 있습니다.</p>
+          </article>
+        </div>
+
+        <div class="insight-grid">
+          <article class="insight card"><div class="num">01 / FIELD REALITY</div><h3>Cell 밖에서 시작되는 사고</h3><p>EPRI 사고 분석은 Cell 자체뿐 아니라 controls, balance-of-system, 설계·통합·시공·운영 인터페이스가 중요한 발화 경로임을 보여줍니다. 수분 침투, coolant 누출, 외부 단락이 대표적입니다.</p><div class="design-cue">설계 질문 → IP sealing과 고전압 절연 경계가 실제로 함께 버티는가?</div></article>
+          <article class="insight card"><div class="num">02 / SCALE EFFECT</div><h3>Pack 성능만으로는 부족</h3><p>Pack에서 전파가 제한되어도, 컨테이너 내부의 가연물·환기 조건·케이블·냉각계통이 결합되면 전혀 다른 developed fire가 형성될 수 있습니다.</p><div class="design-cue">설계 질문 → Container 내부의 fuel inventory와 공기 유입 경로는?</div></article>
+          <article class="insight card"><div class="num">03 / INSTALLATION</div><h3>제품과 현장이 하나의 시험체</h3><p>제조사 권장 최소 이격 거리, 배치 방향, vent opening과 인접 Target Container가 시험 결과의 일부가 됩니다.</p><div class="design-cue">설계 질문 → 우리가 선언할 S_min을 실제 제품으로 입증할 수 있는가?</div></article>
+        </div>
+
+        <article class="fuel-shift card">
+          <div class="fuel-copy">
+            <div class="eyebrow">PHILOSOPHY SHIFT</div>
+            <h3>Ignition initiator가 아니라<br><span style="color:var(--orange)">Fuel source</span>로 본다.</h3>
+            <p>LSFT는 특정 Cell 고장 하나를 정교하게 재현하는 시험이 아닙니다. Thermal Runaway gas가 점화되고, Container 안의 배터리와 가연물이 연소하여 developed fire에 도달하는 보수적 시나리오를 만듭니다.</p>
+            <div class="quote-line"><strong>Initiating Container 1기의 complete combustion</strong>을 허용하되, 그 열과 화염이 인접 Target Container의 Thermal Runaway로 이어지지 않아야 합니다.</div>
+          </div>
+          <div class="fuel-visual" aria-label="연료원 관점의 컨테이너 단면 개념도">
+            <svg viewBox="0 0 500 290" role="img">
+              <title>Container 내부 Rack과 화염, 배기구 개념도</title>
+              <path d="M44 76 250 18l208 61-206 60z" fill="#2a363e" stroke="#52636d"/>
+              <path d="M44 76v140l208 61V139z" fill="#141c21" stroke="#394851"/>
+              <path d="M252 139v138l206-59V79z" fill="#1c252b" stroke="#394851"/>
+              <g fill="#222e35" stroke="#60717b"><path d="m85 97 47 14v108l-47-14z"/><path d="m145 114 47 14v108l-47-14z"/><path d="m205 132 33 10v108l-33-10z"/></g>
+              <g fill="#ff6b2c"><circle cx="108" cy="177" r="12"/><circle cx="168" cy="192" r="17"/><circle cx="222" cy="208" r="13"/></g>
+              <path d="M126 140c-23-32 13-45 4-70 28 17 26 39 36 49 17-26 35-5 28 17 26 21 9 52-20 57-43 7-74-22-48-53z" fill="#f6c85f" opacity=".9"/>
+              <path d="m340 67 60-17 35 10-61 17z" fill="#ff6b2c" stroke="#ff9b71"/>
+              <path d="M372 63c0-35 18-45 18-72M390 59c12-30 34-35 39-55" fill="none" stroke="#ff9b71" stroke-width="3" stroke-dasharray="7 7"/>
+              <g fill="#a9b3bb" font-family="monospace" font-size="11"><text x="72" y="242">RACK / PACK</text><text x="318" y="98">VENT OPENING</text><text x="264" y="238">FUEL INVENTORY</text></g>
+            </svg>
+          </div>
+        </article>
+        <div class="action-row"><button class="btn primary" data-next-step="2">시험 셋업 체험 시작 →</button></div>
+      </section>
+
+      <section class="step-panel" id="step-2" aria-labelledby="step2-title">
+        <div class="section-head">
+          <div class="step-no">02 — SIMULATION</div>
+          <div><h2 id="step2-title">Build the test.</h2><p>6개의 축을 순서대로 설정하세요. 잘못된 선택은 즉시 교정됩니다. 올바른 시험 셋업을 완성해야 다음 축이 열립니다.</p></div>
+        </div>
+
+        <div class="scenario-shell">
+          <aside class="scenario-rail card">
+            <h3>TEST SETUP / 6 AXES</h3>
+            <ol class="axis-list" id="axisList"></ol>
+          </aside>
+          <article class="lab-panel card" aria-live="polite">
+            <div class="lab-stage" id="labStage"></div>
+            <div class="lab-copy">
+              <div class="axis-eyebrow" id="axisEyebrow"></div>
+              <h3 id="axisTitle"></h3>
+              <p id="axisDescription"></p>
+              <div class="choice-grid" id="choiceGrid"></div>
+              <div class="feedback" id="choiceFeedback"></div>
+              <div class="axis-actions">
+                <span class="axis-progress" id="axisProgress"></span>
+                <button class="btn primary" id="axisNext" disabled>다음 축 →</button>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="action-row"><button class="btn primary" id="toCriteria" data-next-step="3" disabled>판정 기준으로 이동 →</button></div>
+      </section>
+
+      <section class="step-panel" id="step-3" aria-labelledby="step3-title">
+        <div class="section-head">
+          <div class="step-no">03 — ACCEPTANCE</div>
+          <div><h2 id="step3-title">One line decides it.</h2><p>Initiating Container는 전소될 수 있습니다. 핵심 판정은 인접 Target Container에서 Thermal Runaway가 시작되는지 여부입니다.</p></div>
+        </div>
+
+        <div class="criteria-visual card">
+          <div class="container-chip">
+            <div>
+              <svg viewBox="0 0 220 130" aria-hidden="true"><path d="M16 50 105 12l98 40-90 39z" fill="#4b3024" stroke="#ff6b2c"/><path d="M16 50v52l97 38V91z" fill="#2d1b15" stroke="#ff6b2c"/><path d="M113 91v49l90-37V52z" fill="#39231b" stroke="#ff6b2c"/><path d="M82 51c-13-21 10-29 4-46 20 13 17 27 25 34 11-19 27-1 17 17 14 11 6 35-14 40-29 6-52-22-32-45z" fill="#f6c85f"/></svg>
+              <h3>Initiating Container</h3><p>Developed fire → Complete combustion</p>
+            </div>
+          </div>
+          <div class="criterion-core">
+            <div class="line"><span>열·화염 노출</span></div>
+            <div class="no-prop">NO<br>PROPAGATION</div>
+            <p>전파 판단은 Target Container의 온도 이력과 Cell venting / Thermal Runaway 관찰을 함께 봅니다.</p>
+          </div>
+          <div class="container-chip">
+            <div>
+              <svg viewBox="0 0 220 130" aria-hidden="true"><path d="M16 50 105 12l98 40-90 39z" fill="#24343a" stroke="#57d7e5"/><path d="M16 50v52l97 38V91z" fill="#162328" stroke="#57d7e5"/><path d="M113 91v49l90-37V52z" fill="#1b2b30" stroke="#57d7e5"/><g stroke="#57d7e5" opacity=".55"><path d="M42 57v55M68 46v76M94 35v96"/></g><path d="m145 75 11 11 21-27" fill="none" stroke="#7cdb9b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <h3>Target Container</h3><p>No Thermal Runaway propagation</p>
+            </div>
+          </div>
+        </div>
+        <div class="criterion-equation"><strong>Complete combustion @ Initiating Container ≠ Thermal Runaway @ Target Container</strong><span>이 등식이 제품의 최소 이격 거리와 실제 설치 조건에서 성립해야 합니다. [조항번호 검수 필요]</span></div>
+
+        <div class="criteria-grid">
+          <article class="criteria-item card"><b>01 / INPUT</b><h3>Wind condition</h3><p>시험 시 기록한 풍속·풍향과 예상 현장 조건을 비교합니다. 바람은 화염 기울기와 plume의 Target 노출을 바꾸는 평가 입력값입니다.</p></article>
+          <article class="criteria-item card"><b>02 / GEOMETRY</b><h3>Separation distance</h3><p>제조사가 선언한 최소 권장 이격 거리에서 얻은 데이터여야 합니다. 더 넓은 시험 거리는 더 좁은 설치를 정당화하지 못합니다.</p></article>
+          <article class="criteria-item card"><b>03 / ENGINEERING</b><h3>Registered Design Professional</h3><p>등록 설계전문가가 시험 결과, 예상 풍속, 권장 이격 거리를 함께 평가해 설치 적합성을 판단합니다. NFPA 855:2026 §9.2.2.2 연계.</p></article>
+        </div>
+
+        <aside class="warning-strip">
+          <div class="warning-icon">!</div>
+          <div><h3>No designed Deflagration Vent?</h3><p>의도된 폭연 압력 해소 면적이 없는 Container는 Annex C의 <strong>Large-Scale Deflagration Test</strong>가 post-deflagration opening 조건을 정하는 경로가 될 수 있습니다. 문·패널의 우발적 개방에 기대는 설계는 시험 시나리오의 공기 공급 조건까지 불확실하게 만듭니다.</p></div>
+        </aside>
+        <div class="action-row"><button class="btn primary" data-next-step="4">설계 체크리스트 열기 →</button></div>
+      </section>
+
+      <section class="step-panel" id="step-4" aria-labelledby="step4-title">
+        <div class="section-head">
+          <div class="step-no">04 — DESIGN</div>
+          <div><h2 id="step4-title">Design for the test.</h2><p>체크는 점수가 아닙니다. EV 배터리의 부품 최적화 관점에서 Container installation 관점으로 설계 리뷰 범위를 넓히는 용도로 사용하세요.</p></div>
+        </div>
+
+        <div class="takeaway-layout">
+          <div class="checklist card">
+            <div class="check-row"><input type="checkbox" id="check-vent"><label for="check-vent"><h3>Deflagration Panel</h3><p>유무, 위치, 유효 vent area, 개방 압력, 방출 방향을 정의하고 Target Container·작업자 동선과 간섭을 검토한다.</p></label><span class="why">WHY LSFT?</span><p class="sr-only">Panel이 없으면 Annex C 시험 경로가 필요할 수 있고, 개방 상태는 developed fire의 공기 공급을 바꿉니다.</p></div>
+            <div class="check-row"><input type="checkbox" id="check-coolant"><label for="check-coolant"><h3>Coolant / Chiller 계통</h3><p>배관 joint, 응축수, leak path와 고전압 busbar·connector 사이의 이격 및 배수·감지 전략을 검토한다.</p></label><span class="why">WHY LSFT?</span><p class="sr-only">Coolant 또는 수분 유입은 다중 Cell arcing과 절연 붕괴의 현실적 개시 경로가 될 수 있습니다.</p></div>
+            <div class="check-row"><input type="checkbox" id="check-lfl"><label for="check-lfl"><h3>LFL 저감 Exhaust Ventilation</h3><p>가연성 가스의 축적 위치, 흡·배기 단락, 전원 상실 시 fail state, vent outlet의 점화원·인접 설비 영향을 검토한다.</p></label><span class="why">WHY LSFT?</span><p class="sr-only">Ventilation은 deflagration 가능성과 이후 developed fire의 산소 공급 조건을 동시에 좌우합니다.</p></div>
+            <div class="check-row"><input type="checkbox" id="check-distance"><label for="check-distance"><h3>Separation Distance</h3><p>개발 초기부터 목표 S_min을 시스템 요구사항으로 설정하고 door swing, service clearance, plume 방향까지 함께 설계한다.</p></label><span class="why">WHY LSFT?</span><p class="sr-only">제조사 권장 최소 거리가 시험 배치이자 현장 설치·마케팅 스펙이 됩니다.</p></div>
+            <div class="check-row"><input type="checkbox" id="check-access"><label for="check-access"><h3>Instrumentation Access</h3><p>Target Rack·Pack 표면의 thermocouple 부착, cable routing, DAQ 보호, 관찰창과 카메라 시야를 고려한 port를 마련한다.</p></label><span class="why">WHY LSFT?</span><p class="sr-only">접근성이 없으면 시험용 가공이 제품의 실제 열·환기 조건을 왜곡하거나 반복성을 떨어뜨릴 수 있습니다.</p></div>
+          </div>
+
+          <aside class="system-map card">
+            <h3>Container Design Map</h3><p>체크 항목이 실제 어느 interface에 걸리는지 확인하세요.</p>
+            <svg viewBox="0 0 420 500" role="img" aria-label="Container 내부 Rack, Chiller, Deflagration Panel, Exhaust, 계측 포트 위치 개념도">
+              <path d="M35 109 204 29l181 82-171 82z" fill="#29363e" stroke="#536671"/>
+              <path d="M35 109v259l179 91V193z" fill="#141d22" stroke="#3b4b54"/>
+              <path d="M214 193v266l171-90V111z" fill="#1c272d" stroke="#3b4b54"/>
+              <g fill="#26343b" stroke="#60737d"><path d="m73 151 49 24v175l-49-25z"/><path d="m132 181 49 24v175l-49-25z"/><path d="m235 215 48-25v178l-48 25z"/><path d="m293 185 48-24v177l-48 25z"/></g>
+              <g fill="#57d7e5"><circle cx="98" cy="242" r="5"/><circle cx="157" cy="273" r="5"/><circle cx="260" cy="281" r="5"/><circle cx="317" cy="250" r="5"/></g>
+              <path d="m278 118 67-32 29 13-68 33z" fill="#ff6b2c" stroke="#ff9b71"/>
+              <path d="m47 106 74-35 45 20-76 36z" fill="#f6c85f" stroke="#ffe19a"/>
+              <path d="m255 407 63-33v53l-63 34z" fill="#233f45" stroke="#57d7e5"/>
+              <g fill="none" stroke-width="1.5"><path d="M92 81 32 42" stroke="#f6c85f"/><path d="M327 103 395 60" stroke="#ff6b2c"/><path d="M290 416 386 447" stroke="#57d7e5"/><path d="M98 242 17 249" stroke="#57d7e5"/><path d="M341 240 403 223" stroke="#a9b3bb"/></g>
+              <g font-family="monospace" font-size="10"><text x="8" y="35" fill="#f6c85f">DEFLAGRATION PANEL</text><text x="326" y="51" fill="#ff9b71">EXHAUST</text><text x="329" y="466" fill="#57d7e5">CHILLER</text><text x="8" y="267" fill="#57d7e5">T/C PORT</text><text x="343" y="216" fill="#a9b3bb">RACK</text></g>
+            </svg>
+            <p class="check-note">Illustration is conceptual — 실제 위치·개수·치수는 제품 설계 및 시험기관 검토로 확정합니다.</p>
+          </aside>
+        </div>
+
+        <section class="exclusions card" aria-labelledby="excluded-title">
+          <h3 id="excluded-title">본 교육에서 제외된 범위</h3>
+          <p>현재 개발 대상은 <strong>outdoor / container type / single-layer</strong>입니다. 아래 조건은 의도적으로 시나리오에 포함하지 않았습니다.</p>
+          <div class="exclusion-list">
+            <div class="exclusion"><strong>Indoor installation</strong>건축물 내부 설치·sprinkler 관련 조건</div>
+            <div class="exclusion"><strong>Wall-adjacent installation</strong>벽·천장·soffit 인접 배치 조건</div>
+            <div class="exclusion"><strong>Stacked arrangement</strong>Container 적층 및 stack 간 이격 조건</div>
+          </div>
+        </section>
+
+        <details class="sources card">
+          <summary>공개 근거자료 및 검수 메모</summary>
+          <ul>
+            <li><a href="https://www.ul.com/resources/installation-codes-and-requirements-energy-storage-systems-ess-faqs" target="_blank" rel="noreferrer">UL Solutions — Installation Codes and Requirements for ESS FAQs</a>: 6판 발행일, 비주거용 Unit Level 변화, Section 10 및 Annex C 개요.</li>
+            <li><a href="https://www.ul.com/thecodeauthority/knowledge/understanding-UL-9540A-NFPA-855" target="_blank" rel="noreferrer">UL Solutions — Understanding UL 9540A, NFPA 855 and LSFT</a>: developed fire, separation distance, active fire protection, enclosure resilience 개요.</li>
+            <li><a href="https://www.ul.com/thecodeauthority/knowledge/unlock-compliance-excellence-battery-energy-storage-systems" target="_blank" rel="noreferrer">UL Solutions — Unlock Compliance Excellence in BESS</a>: fully developed fire와 Annex C post-deflagration condition.</li>
+            <li><a href="https://storagewiki.epri.com/index.php/BESS_Failure_Incident_Database" target="_blank" rel="noreferrer">EPRI BESS Failure Incident Database</a> 및 공개 root-cause analysis: water intrusion, BOS·controls·integration interface 관련 배경.</li>
+            <li><a href="https://cleanpower.org/wp-content/uploads/gateway/2025/03/ACP_BatteryEnergyStorageCommitmenttoSafety_FactSheet_0306-1.pdf" target="_blank" rel="noreferrer">ACP Battery Energy Storage Safety Fact Sheet</a>: large-scale fire testing의 공공 안전 맥락.</li>
+          </ul>
+          <p class="review-note">본 자료는 공식 표준 원문을 대체하지 않습니다. UL 9540A Section 10의 세부 10.x 조항 번호와 시험기관별 setup detail은 라이선스 원문 및 인증기관과 최종 대조하십시오. 앱 내 UL 세부번호는 의도적으로 생성하지 않았습니다.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer>SELF-LEARNING MATERIAL · INTERNAL DESIGN EDUCATION · TERMS MAPPED: ENCLOSURE→CONTAINER / UNIT→RACK / MODULE→PACK</footer>
+  </div>
+
+  <script>
+    const axes = [
+      {
+        short: '시험장·환경', title: '시험장 및 환경 조건 설정',
+        description: 'Outdoor test site를 구성하고 시험 전·중 풍속과 풍향을 기록합니다. 이 값은 Registered Design Professional이 실제 설치 조건을 평가할 때 사용하는 입력값입니다.',
+        choices: [
+          { title: '실내 무풍 시험장', sub: '환경 변수를 제거해 반복성을 높인다', correct: false, feedback: '본 시나리오는 outdoor Container BESS입니다. 실내 조건으로 바꾸면 바람에 따른 plume과 Target 노출을 대표하지 못합니다.' },
+          { title: '야외 + 풍속·풍향 연속 기록', sub: '시험 전·중 조건을 time-stamped data로 남긴다', correct: true, feedback: '맞습니다. 풍속·풍향은 단순 참고값이 아니라 화염과 열 plume의 방향을 해석하는 설계 입력입니다.' },
+          { title: '야외 + 날씨가 잔잔하면 기록 생략', sub: '육안으로 충분히 판단한다', correct: false, feedback: '기록되지 않은 바람은 나중에 재현하거나 현장 조건과 비교할 수 없습니다. 계측·기록이 필요합니다.' }
+        ], visual: 'site'
+      },
+      {
+        short: '배치·이격', title: 'Container 배치 및 이격 거리',
+        description: 'Initiating Container와 Target Container를 실제 설치 방향으로 배치합니다. 시험 거리는 제조사가 선언하려는 권장 최소 이격 거리 S_min이어야 합니다.',
+        choices: [
+          { title: '안전 여유를 위해 S_min보다 넓게', sub: '시험 성공 가능성을 높인다', correct: false, feedback: '함정입니다. 더 넓은 거리에서 성공한 결과는 더 좁은 권장 설치 거리를 입증하지 못합니다. 시험은 선언할 최소 거리에서 수행해야 합니다.' },
+          { title: '제조사 권장 최소 거리 S_min', sub: '최종 설치·마케팅 스펙과 동일하게 배치', correct: true, feedback: '맞습니다. S_min은 도면상의 치수이면서 LSFT의 핵심 시험조건입니다.' },
+          { title: '현장마다 다르므로 거리 미정', sub: '시험기관이 당일 적절히 선택한다', correct: false, feedback: '이격 거리는 사전에 정의된 제품 설치 조건이어야 합니다. 설계 목표가 없으면 시험 결과의 적용 범위도 불명확해집니다.' }
+        ], visual: 'distance'
+      },
+      {
+        short: '점화·발화', title: 'Ignition Source 및 발화 조건',
+        description: 'Propane burner 등 적절한 Ignition Source로 Initiating Container 내부에 developed fire를 형성합니다. 배터리와 주변 가연물이 충분히 관여하는 보수적 화재 시나리오입니다.',
+        choices: [
+          { title: 'Cell 1개만 순간 가열 후 종료', sub: 'Cell-level initiation을 그대로 확대', correct: false, feedback: 'LSFT의 목적은 Cell 하나의 반응만 보는 것이 아닙니다. Container 내부 연료가 관여하는 developed fire condition을 만들어야 합니다.' },
+          { title: 'Propane burner로 developed fire 형성', sub: 'Cell·플라스틱 등 가연물이 광범위하게 연소', correct: true, feedback: '맞습니다. 특정 failure mode의 재현보다 최악의 developed fire와 complete combustion을 평가하는 접근입니다.' },
+          { title: '외부 표면에만 짧게 화염 노출', sub: 'Container 외피 내화성만 확인', correct: false, feedback: '외부 표면 노출만으로는 내부 배터리와 가연물이 연료로 참여하는 시나리오를 만들 수 없습니다.' }
+        ], visual: 'ignition'
+      },
+      {
+        short: '안전장치', title: '안전장치 상태 설정',
+        description: 'Initiating Container가 능동 보호 없이 developed fire에 도달하도록 suppression 및 detection 관련 개입 상태를 설정합니다.',
+        choices: [
+          { title: 'Suppression ON + Detection ON', sub: '정상 운전과 동일한 보호상태', correct: false, feedback: '핵심 함정입니다. 이 LSFT 시나리오는 fire suppression과 detection system을 disengaged 상태로 두어 active protection이 화재 성장을 멈추지 않게 합니다.' },
+          { title: 'Suppression OFF + Detection ON', sub: '감지는 유지하고 소화만 차단', correct: false, feedback: 'Detection까지 포함해 시험 중 개입을 유발할 수 있는 active system은 disengaged 조건으로 구성해야 합니다.' },
+          { title: 'Suppression OFF + Detection OFF', sub: '두 시스템 모두 disengaged', correct: true, feedback: '맞습니다. Initiating Container의 active fire protection 개입 없이 developed fire의 영향과 인접 전파를 관찰합니다.' }
+        ], visual: 'safety'
+      },
+      {
+        short: '계측', title: 'Instrumentation 셋업',
+        description: 'Target Container 내부 Pack·Rack의 열 노출을 thermocouple로 추적합니다. 추가 데이터는 AHJ와 fire protection engineering 검토의 품질을 크게 높입니다.',
+        choices: [
+          { title: 'Target thermocouple + 추가 fire data', sub: '온도 필수, HRR·heat flux·gas 등 적극 취득', correct: true, feedback: '맞습니다. Target 온도는 비전파 판정의 중심이고, HRR·heat flux·gas·영상·BMS data는 NFPA 855 제출과 AHJ 질의 대응에 강력한 근거가 됩니다.' },
+          { title: '카메라 영상만 기록', sub: '화염 전파는 영상으로 판정', correct: false, feedback: '영상은 중요한 보조자료지만 Target 내부 Pack 표면의 온도 이력과 Thermal Runaway 징후를 대체하지 못합니다.' },
+          { title: 'Initiating Container 온도만 측정', sub: '발화 성공 여부에 집중', correct: false, feedback: '핵심 판정 대상은 Target Container입니다. Target 내부의 온도 grid와 venting / Thermal Runaway 관찰이 필요합니다.' }
+        ], visual: 'instrument'
+      },
+      {
+        short: '진행·종료', title: '시험 진행, 종료 및 판정',
+        description: 'Developed fire 이후 Initiating Container의 연소가 충분히 진행되고 잔류 위험이 관리될 때까지 관찰합니다. Target의 온도와 사건 시점을 끝까지 기록합니다.',
+        choices: [
+          { title: '화염이 가장 커진 순간 종료', sub: 'Peak fire만 확인하면 충분', correct: false, feedback: 'Peak 이후에도 잔류 Pack의 재점화와 지연된 열전달이 발생할 수 있습니다. complete combustion과 안전한 마무리까지 관찰해야 합니다.' },
+          { title: 'Initiating complete combustion까지 관찰', sub: 'Target TR·venting·위험 온도와 재점화까지 기록', correct: true, feedback: '맞습니다. Target에서 Thermal Runaway propagation이 없는지 확인하고, 연소 종료·cool-down·잔류 에너지와 재점화 위험을 관리한 뒤 시험을 마무리합니다.' },
+          { title: 'Target 외벽에 불이 닿으면 즉시 실패', sub: '화염 접촉 자체를 propagation으로 간주', correct: false, feedback: '화염 또는 열 노출과 Thermal Runaway propagation은 구분해야 합니다. Target 내부 온도와 venting / TR 관찰로 판정합니다.' }
+        ], visual: 'finish'
+      }
+    ];
+
+    let activeStep = 1;
+    let unlockedStep = 1;
+    let activeAxis = 0;
+    const solvedAxes = new Set();
+
+    const progressBar = document.getElementById('globalProgress');
+    const progressLabel = document.getElementById('progressLabel');
+    const tabs = [...document.querySelectorAll('.step-tab')];
+    const panels = [...document.querySelectorAll('.step-panel')];
+
+    function showStep(step, shouldScroll = true) {
+      const requestedStep = Number(step);
+      if (requestedStep > unlockedStep) return;
+      activeStep = requestedStep;
+      panels.forEach(panel => panel.classList.toggle('is-active', panel.id === `step-${activeStep}`));
+      tabs.forEach(tab => {
+        const n = Number(tab.dataset.stepTarget);
+        tab.disabled = n > unlockedStep;
+        tab.classList.toggle('is-active', n === activeStep);
+        tab.classList.toggle('is-complete', n < activeStep);
+      });
+      progressBar.style.width = `${activeStep * 25}%`;
+      progressLabel.textContent = `STEP ${activeStep} / 4`;
+      if (shouldScroll) document.querySelector('.step-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => showStep(tab.dataset.stepTarget)));
+    document.querySelectorAll('[data-next-step]').forEach(button => button.addEventListener('click', () => {
+      const nextStep = Number(button.dataset.nextStep);
+      unlockedStep = Math.max(unlockedStep, nextStep);
+      showStep(nextStep);
+    }));
+
+    const visuals = {
+      site: `<span class="stage-label">AXIS 01 / OUTDOOR SITE</span><svg viewBox="0 0 760 350" role="img" aria-label="야외 시험장과 풍속 풍향 계측기"><path d="M55 278 336 129l370 137-287 71z" fill="#11191d" stroke="#2b363e"/><g stroke="#253139"><path d="m89 290 288-150M146 307l288-150M216 324l287-150M294 337l287-150M395 335 95 224M476 315 174 204M555 294 254 183M636 275 333 163"/></g><path d="M332 170v-99" stroke="#a9b3bb" stroke-width="4"/><path d="m332 76 73 19-73 14z" fill="#57d7e5"/><circle cx="332" cy="72" r="7" fill="#f3f6f8"/><path d="M104 122c73-27 126-17 182 4M88 153c73-27 126-17 182 4" fill="none" stroke="#57d7e5" stroke-width="2" stroke-dasharray="8 8"/><text x="81" y="102" fill="#57d7e5" font-family="monospace" font-size="12">WIND VECTOR / TIME LOG</text><g transform="translate(408 142)"><path d="M0 66 99 14l104 54-100 52z" fill="#29363e" stroke="#52636d"/><path d="M0 66v83l103 53v-82z" fill="#172127" stroke="#394851"/><path d="M103 120v82l100-52V68z" fill="#202a30" stroke="#394851"/></g></svg><div class="stage-photo-slot">PHOTO SLOT<br>실제 시험장 사진<br>추후 삽입</div>`,
+      distance: `<span class="stage-label">AXIS 02 / SEPARATION</span><svg viewBox="0 0 760 350" role="img" aria-label="Initiating과 Target Container의 최소 이격 거리"><g transform="translate(52 114)"><path d="M0 61 98 10l104 54-100 52z" fill="#23343b" stroke="#57d7e5"/><path d="M0 61v99l102 52v-96z" fill="#152328" stroke="#57d7e5"/><path d="M102 116v96l100-51V64z" fill="#1b2b30" stroke="#57d7e5"/><text x="34" y="145" fill="#57d7e5" font-family="monospace" font-size="10">TARGET</text></g><g transform="translate(500 114)"><path d="M0 61 98 10l104 54-100 52z" fill="#4b3024" stroke="#ff6b2c"/><path d="M0 61v99l102 52v-96z" fill="#2d1b15" stroke="#ff6b2c"/><path d="M102 116v96l100-51V64z" fill="#39231b" stroke="#ff6b2c"/><text x="26" y="145" fill="#ff9b71" font-family="monospace" font-size="10">INITIATING</text></g><path d="M270 240h220" stroke="#57d7e5" stroke-width="2" stroke-dasharray="8 7"/><path d="m281 232-17 8 17 8M479 232l17 8-17 8" fill="none" stroke="#57d7e5" stroke-width="2"/><rect x="324" y="207" width="112" height="31" rx="6" fill="#10171b" stroke="#57d7e5"/><text x="342" y="228" fill="#57d7e5" font-family="monospace" font-size="13">S_min</text><text x="300" y="273" fill="#a9b3bb" font-family="monospace" font-size="11">MANUFACTURER RECOMMENDED</text></svg><div class="stage-photo-slot">PHOTO SLOT<br>배치 전경 사진<br>추후 삽입</div>`,
+      ignition: `<span class="stage-label">AXIS 03 / DEVELOPED FIRE</span><svg viewBox="0 0 760 350" role="img" aria-label="Propane burner로 Container 내부 developed fire 형성"><path d="M132 85 369 23l258 67-240 66z" fill="#29363e" stroke="#52636d"/><path d="M132 85v177l255 70V156z" fill="#151e23" stroke="#394851"/><path d="M387 156v176l240-65V90z" fill="#1e282e" stroke="#394851"/><g fill="#26343b" stroke="#566a74"><path d="m191 119 54 15v142l-54-15z"/><path d="m258 138 54 15v142l-54-15z"/><path d="m435 147 53-14v146l-53 14z"/></g><path d="M297 218h70v24h-70z" fill="#4e5559" stroke="#a9b3bb"/><path d="M332 219c-29-39 14-54 5-85 34 22 30 48 42 61 21-32 43-5 35 23 31 25 11 64-25 72-54 11-92-29-57-72z" fill="#f6c85f"/><path d="M340 228c-13-19 7-29 4-42 15 11 13 22 20 29 7-15 20-2 14 12 12 10 4 27-12 30-24 5-40-13-26-29z" fill="#ff6b2c"/><path d="M270 230h-62" stroke="#ff9b71" stroke-width="3"/><text x="105" y="235" fill="#ff9b71" font-family="monospace" font-size="11">PROPANE BURNER</text><text x="450" y="315" fill="#a9b3bb" font-family="monospace" font-size="11">BATTERY + COMBUSTIBLES</text></svg><div class="stage-photo-slot">PHOTO SLOT<br>Ignition setup 사진<br>추후 삽입</div>`,
+      safety: `<span class="stage-label">AXIS 04 / SYSTEM STATE</span><svg viewBox="0 0 760 350" role="img" aria-label="소화 및 감지 시스템 비활성화"><g transform="translate(190 40)"><path d="M0 95 179 10l190 87-181 86z" fill="#29363e" stroke="#52636d"/><path d="M0 95v170l188 90V183z" fill="#151e23" stroke="#394851"/><path d="M188 183v172l181-94V97z" fill="#1e282e" stroke="#394851"/><circle cx="80" cy="182" r="23" fill="#151e23" stroke="#ff7d73"/><path d="m65 167 30 30M95 167l-30 30" stroke="#ff7d73" stroke-width="5"/><circle cx="271" cy="173" r="23" fill="#151e23" stroke="#ff7d73"/><path d="m256 158 30 30M286 158l-30 30" stroke="#ff7d73" stroke-width="5"/><text x="32" y="225" fill="#ff7d73" font-family="monospace" font-size="11">DETECTION</text><text x="233" y="216" fill="#ff7d73" font-family="monospace" font-size="11">SUPPRESSION</text></g><rect x="282" y="292" width="194" height="34" rx="7" fill="#2c1514" stroke="#ff7d73"/><text x="317" y="314" fill="#ff7d73" font-family="monospace" font-size="13">DISENGAGED</text></svg><div class="stage-photo-slot">PHOTO SLOT<br>System bypass 기록<br>추후 삽입</div>`,
+      instrument: `<span class="stage-label">AXIS 05 / INSTRUMENTATION</span><svg viewBox="0 0 760 350" role="img" aria-label="Target Container thermocouple 계측 위치"><path d="M108 79 347 18l260 65-241 67z" fill="#27353d" stroke="#57d7e5"/><path d="M108 79v184l258 69V150z" fill="#142227" stroke="#57d7e5"/><path d="M366 150v182l241-65V83z" fill="#1a2b30" stroke="#57d7e5"/><g fill="#26343b" stroke="#60737d"><path d="m164 119 54 15v140l-54-15z"/><path d="m230 138 54 15v140l-54-15z"/><path d="m407 150 52-14v142l-52 14z"/><path d="m473 132 52-14v142l-52 14z"/></g><g fill="#f6c85f" stroke="#fff0ac"><circle cx="185" cy="161" r="6"/><circle cx="185" cy="211" r="6"/><circle cx="250" cy="180" r="6"/><circle cx="250" cy="231" r="6"/><circle cx="431" cy="178" r="6"/><circle cx="431" cy="228" r="6"/><circle cx="497" cy="161" r="6"/><circle cx="497" cy="211" r="6"/></g><path d="M526 279c64 13 70 27 90 40" fill="none" stroke="#f6c85f" stroke-width="2"/><rect x="607" y="303" width="92" height="35" rx="6" fill="#202a30" stroke="#f6c85f"/><text x="630" y="325" fill="#f6c85f" font-family="monospace" font-size="12">DAQ</text><text x="92" y="319" fill="#57d7e5" font-family="monospace" font-size="11">TARGET T/C GRID · PACK / RACK SURFACE</text></svg><div class="stage-photo-slot">PHOTO SLOT<br>T/C routing 사진<br>추후 삽입</div>`,
+      finish: `<span class="stage-label">AXIS 06 / OBSERVE TO COMPLETION</span><svg viewBox="0 0 760 350" role="img" aria-label="Initiating Container 완전 연소 후 Target 비전파 확인"><g transform="translate(70 116)"><path d="M0 52 84 9l88 45-85 44z" fill="#23343b" stroke="#57d7e5"/><path d="M0 52v84l87 44V98z" fill="#152328" stroke="#57d7e5"/><path d="M87 98v82l85-43V54z" fill="#1b2b30" stroke="#57d7e5"/><path d="m55 111 14 14 28-35" fill="none" stroke="#7cdb9b" stroke-width="7" stroke-linecap="round"/></g><g transform="translate(500 116)"><path d="M0 52 84 9l88 45-85 44z" fill="#38241c" stroke="#ff6b2c"/><path d="M0 52v84l87 44V98z" fill="#211511" stroke="#ff6b2c"/><path d="M87 98v82l85-43V54z" fill="#2a1b15" stroke="#ff6b2c"/><path d="M66 54c-18-25 9-35 3-55 22 14 20 31 28 39 13-21 28-3 22 15 20 16 7 41-16 46-34 7-59-18-37-45z" fill="#f6c85f"/></g><path d="M265 220h228" stroke="#2b363e" stroke-width="2"/><path d="M270 220c40-80 73 53 112-20s72 47 106-10" fill="none" stroke="#57d7e5" stroke-width="3"/><path d="M270 289h220" stroke="#a9b3bb"/><g fill="#a9b3bb" font-family="monospace" font-size="10"><text x="262" y="309">DEVELOPED FIRE</text><text x="419" y="309">COOL-DOWN</text></g><text x="278" y="83" fill="#7cdb9b" font-family="monospace" font-size="14">TARGET: NO TR PROPAGATION</text></svg><div class="stage-photo-slot">PHOTO SLOT<br>Post-test 사진<br>추후 삽입</div>`
+    };
+
+    const axisList = document.getElementById('axisList');
+    const labStage = document.getElementById('labStage');
+    const axisEyebrow = document.getElementById('axisEyebrow');
+    const axisTitle = document.getElementById('axisTitle');
+    const axisDescription = document.getElementById('axisDescription');
+    const choiceGrid = document.getElementById('choiceGrid');
+    const feedback = document.getElementById('choiceFeedback');
+    const axisNext = document.getElementById('axisNext');
+    const axisProgress = document.getElementById('axisProgress');
+    const toCriteria = document.getElementById('toCriteria');
+
+    function renderAxisList() {
+      axisList.innerHTML = axes.map((axis, index) => {
+        const unlocked = index === 0 || solvedAxes.has(index - 1);
+        const current = index === activeAxis;
+        const done = solvedAxes.has(index);
+        return `<li><button class="axis-button ${current ? 'is-current' : ''} ${done ? 'is-done' : ''}" data-axis="${index}" ${unlocked ? '' : 'disabled'} aria-current="${current ? 'step' : 'false'}"><span class="axis-index">0${index + 1}</span><span class="axis-label">${axis.short}</span><span class="axis-state">${done ? '✓' : current ? '•' : '·'}</span></button></li>`;
+      }).join('');
+      axisList.querySelectorAll('[data-axis]').forEach(button => button.addEventListener('click', () => {
+        activeAxis = Number(button.dataset.axis);
+        renderAxis();
+      }));
+    }
+
+    function renderAxis() {
+      const axis = axes[activeAxis];
+      renderAxisList();
+      labStage.innerHTML = visuals[axis.visual];
+      axisEyebrow.textContent = `AXIS 0${activeAxis + 1} / 06`;
+      axisTitle.textContent = axis.title;
+      axisDescription.textContent = axis.description;
+      axisProgress.textContent = `${activeAxis + 1} OF ${axes.length}`;
+      feedback.className = 'feedback';
+      feedback.innerHTML = '';
+      choiceGrid.innerHTML = axis.choices.map((choice, index) => `<button class="choice" data-choice="${index}"><strong>${choice.title}</strong><span>${choice.sub}</span></button>`).join('');
+      const alreadySolved = solvedAxes.has(activeAxis);
+      axisNext.disabled = !alreadySolved;
+      axisNext.textContent = activeAxis === axes.length - 1 ? '셋업 완료' : '다음 축 →';
+      if (alreadySolved) {
+        const correctIndex = axis.choices.findIndex(choice => choice.correct);
+        const btn = choiceGrid.querySelector(`[data-choice="${correctIndex}"]`);
+        btn.classList.add('is-correct');
+        choiceGrid.querySelectorAll('.choice').forEach(button => { button.disabled = true; });
+        feedback.className = 'feedback correct is-visible';
+        feedback.innerHTML = `<strong>SETUP CONFIRMED</strong><p>${axis.choices[correctIndex].feedback}</p>`;
+      }
+      choiceGrid.querySelectorAll('[data-choice]').forEach(button => button.addEventListener('click', () => handleChoice(Number(button.dataset.choice))));
+    }
+
+    function handleChoice(choiceIndex) {
+      const axis = axes[activeAxis];
+      const choice = axis.choices[choiceIndex];
+      choiceGrid.querySelectorAll('.choice').forEach(button => button.classList.remove('is-correct', 'is-wrong'));
+      const selected = choiceGrid.querySelector(`[data-choice="${choiceIndex}"]`);
+      selected.classList.add(choice.correct ? 'is-correct' : 'is-wrong');
+      feedback.className = `feedback ${choice.correct ? 'correct' : 'wrong'} is-visible`;
+      feedback.innerHTML = `<strong>${choice.correct ? 'SETUP CONFIRMED' : 'CORRECTION REQUIRED'}</strong><p>${choice.feedback}</p>`;
+      if (choice.correct) {
+        solvedAxes.add(activeAxis);
+        choiceGrid.querySelectorAll('.choice').forEach(button => { button.disabled = true; });
+        axisNext.disabled = false;
+        if (solvedAxes.size === axes.length) toCriteria.disabled = false;
+        renderAxisList();
+      } else {
+        axisNext.disabled = !solvedAxes.has(activeAxis);
+      }
+    }
+
+    axisNext.addEventListener('click', () => {
+      if (!solvedAxes.has(activeAxis)) return;
+      if (activeAxis < axes.length - 1) {
+        activeAxis += 1;
+        renderAxis();
+        document.querySelector('.lab-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        toCriteria.disabled = false;
+        toCriteria.focus();
+      }
+    });
+
+    renderAxis();
+    showStep(1, false);
+  </script>
+</body>
+</html>
