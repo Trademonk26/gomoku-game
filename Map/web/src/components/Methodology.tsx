@@ -80,7 +80,7 @@ export default function Methodology() {
         </div>
         <p className="muted">
           결측 축: {Object.entries(m.deferred_axes).map(([k, v]) => `${k}(${v})`).join(" · ")} — Phase 1-2에서
-          V-World(용도지역), 공공데이터포털(공시지가), SGIS(인구격자) API 키 발급 후 적재 예정. S축은 ILIS 미분양·분양공고 통계부터 가동 중입니다.
+          V-World(용도지역·규제·토지특성 공시지가), SGIS(인구격자) API 키 발급 후 적재 예정. S축은 ILIS 미분양·개발중·분양공고 통계로 가동 중입니다.
         </p>
         <p className="muted">{m.osm_note} — OSM 변전소 태깅은 불완전할 수 있어 전력축 신뢰도는 C입니다.</p>
         <p className="muted">신뢰도 C 지표의 축 내 기여 상한(50%)은 사전 v1.1 설계에 포함되어 있으며, L축과 추가 공식 지표 적재 후 활성화됩니다.</p>
@@ -92,7 +92,7 @@ export default function Methodology() {
           <li>행정경계: 통계청·행정안전부 원천, <a href="https://github.com/vuski/admdongkor" target="_blank" rel="noreferrer">vuski/admdongkor</a> ver20260701 (2026.7 광주·전남 통합 반영)</li>
           <li>전력설비: <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>, ODbL</li>
           <li>기후(냉방도일): <a href="https://open-meteo.com" target="_blank" rel="noreferrer">Open-Meteo</a> ERA5 재분석 2020~2024, 기준온도 24°C</li>
-          <li>산업시설용지: <a href="https://www.industryland.or.kr/sta/staSearch/list" target="_blank" rel="noreferrer">ILIS 산업입지정보센터</a> 지역별 산업시설용지분양현황, {m.ilis_note}</li>
+          <li>산업시설용지: <a href="https://www.industryland.or.kr/sta/staSearch/list" target="_blank" rel="noreferrer">ILIS 산업입지정보센터</a> 지역별 산업시설용지 분양현황·개발중 및 미분양 현황, {m.ilis_note}</li>
           <li>지진구역: <a href="https://www.kalis.or.kr/wpge/m_195/info/info060601.do" target="_blank" rel="noreferrer">국토안전관리원 지진구역도</a> (KDS 내진설계기준)</li>
           <li>육양국: 공개 보도 기반 자체 정리(부산 송정·거제·태안) — 좌표 ±수 km 근사</li>
           <li>유치 의지: 언론 보도 수동 큐레이션(출처 URL 필수 정책, 현재 5개 지역 시드)</li>

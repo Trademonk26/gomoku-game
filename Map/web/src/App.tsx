@@ -80,7 +80,7 @@ export default function App() {
       <WeightPanel />
 
       <div className="mvp-banner" role="note">
-        Phase 1-2 예비 MVP(무키 공개 데이터) — S(부지) 축 일부가 ILIS 공식 통계로 가동됐고, L(토지·규제) 축과 개발가능면적 게이트는 비활성입니다.
+        Phase 1-2 예비 MVP(무키 공개 데이터) — S(부지) 축의 미분양·개발중·분양공고 지표가 ILIS 공식 통계로 가동됐고, L(토지·규제) 축과 개발가능면적 게이트는 비활성입니다.
         현재 랭킹은 투자 판단이 아니라 UI·산식·데이터 구조 검증용입니다.
       </div>
 

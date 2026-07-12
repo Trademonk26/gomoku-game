@@ -1,6 +1,6 @@
 """지표 계산 → 백분위 → 근거(evidence) 생성 → outputs/web/dataset.json 산출.
 
-Phase 1-2 라이브 지표 10개: P1 P2 P6 / W5 / N1 N2 / H3 / S1 S6 / A1
+Phase 1-2 라이브 지표 11개: P1 P2 P6 / W5 / N1 N2 / H3 / S1 S2 S6 / A1
 L(토지·규제) 축은 API 키 필요 소스라 결측 — 가중치 재분배 + 커버리지로 정직하게 표시.
 """
 import sys
@@ -20,7 +20,7 @@ AXES = [
     {"id": "L", "label": "토지·규제", "desc": "용도지역·규제 중첩·지가 (데이터 대기)"},
     {"id": "N", "label": "통신망", "desc": "해저케이블 육양국, 수도권 지연시간"},
     {"id": "H", "label": "재난 안전", "desc": "지진구역계수"},
-    {"id": "S", "label": "부지 확보", "desc": "공식 산업시설용지 미분양·분양공고 면적"},
+    {"id": "S", "label": "부지 확보", "desc": "공식 산업시설용지 미분양·개발중·분양공고 면적"},
     {"id": "A", "label": "인허가·수용성", "desc": "지자체 유치 의지(큐레이션)"},
 ]
 
@@ -79,6 +79,12 @@ INDICATORS = [
      "requires_manual_verification": False,
      "caveat": "시군구 단위 공식 통계의 미분양면적 — 데이터센터 용도 적합성·필지 형상·가격·인프라는 개별 공고 확인 필요",
      "good": "공식 미분양 산업시설용지 재고 — 즉시 확보 후보가 많음", "bad": "공식 미분양 산업시설용지 재고 부족"},
+    {"id": "S2", "axis": "S", "label": "개발중 산업시설용지 면적", "unit": "ha", "direction": "up",
+     "reliability": "A", "source": {"name": "ILIS 산업입지정보센터 통계검색 - 개발중 및 미분양 산업시설용지 현황", "url": "https://www.industryland.or.kr/sta/staSearch/list"},
+     "source_type": "official_stat", "proxy_level": "direct", "official_source": True,
+     "requires_manual_verification": False,
+     "caveat": "시군구 단위 공식 통계의 분양미공고 개발중 산업시설용지 — 공급 시점·조성 공정·개별 필지 계획은 사업시행자 확인 필요",
+     "good": "개발중 산업시설용지 면적 큼 — 중기 공급 파이프라인 풍부", "bad": "개발중 산업시설용지 공급 파이프라인 부족"},
     {"id": "S6", "axis": "S", "label": "분양공고 산업시설용지 면적", "unit": "ha", "direction": "up",
      "reliability": "A", "source": {"name": "ILIS 산업입지정보센터 통계검색 - 지역별 산업시설용지분양현황", "url": "https://www.industryland.or.kr/sta/staSearch/list"},
      "source_type": "official_stat", "proxy_level": "direct", "official_source": True,
@@ -116,6 +122,7 @@ def build_values(meta, power, cdd, ilis, stations, zone2_keys, incentives):
         v["H3"] = 0.07 if key in zone2_keys else 0.11
         ilis_row = ilis["values"].get(code)
         v["S1"] = None if ilis_row is None else round((ilis_row.get("unsold_area_m2") or 0) / 10_000, 1)
+        v["S2"] = None if ilis_row is None else round((ilis_row.get("development_pipeline_area_m2") or 0) / 10_000, 1)
         v["S6"] = None if ilis_row is None else round((ilis_row.get("announced_area_m2") or 0) / 10_000, 1)
         v["A1"] = incentives.get(key, {}).get("score")
     return values
@@ -146,7 +153,7 @@ def build_evidence(m, values, pct, flags, incentives):
         caution.append({"ind": "P8", "text": "전력계통영향평가 대상권(수도권) — 페널티 −15점 적용. 신규 대형 수전은 평가 통과 필요"})
     if flags["jeju"]:
         caution.append({"ind": "P8", "text": "계통 고립(제주) — 페널티 −10점 적용. HVDC 연계 제약"})
-    verify.append({"ind": "L", "text": "토지·규제(L) 축은 데이터 대기(V-World·공공데이터포털 API 키 필요) — 용도지역·규제중첩은 토지이음/V-World에서 개별 확인"})
+    verify.append({"ind": "L", "text": "토지·규제(L) 축은 데이터 대기(V-World API 키 필요) — 용도지역·규제중첩은 토지이음/V-World에서 개별 확인"})
     return {"recommend": rec[:4], "caution": caution[:3], "verify": verify[:4]}
 
 
@@ -195,8 +202,8 @@ def main():
             "indicator_dictionary": {"version": "v1.1", "designed": 43},
             "presets": PRESETS,
             "penalties": {"metro": -15, "jeju": -10},
-            "deferred_axes": {"L": "V-World·공공데이터포털 API 키 필요"},
-            "ilis_note": f"ILIS 산업시설용지분양현황 {ilis['source']['period']} 기준, 미등재 시군구는 0㎡로 처리. 행정구역 분구 전 집계는 결측 유지",
+            "deferred_axes": {"L": "V-World API 키 필요"},
+            "ilis_note": f"ILIS 산업시설용지분양현황·개발중 및 미분양 현황 {ilis['source']['period']} 기준, 미등재 시군구는 0㎡로 처리. 행정구역 분구 전 집계는 결측 유지",
             "osm_note": f"변전소 전체 {power['substations_all']}개 중 전압 미태깅 {power['substations_voltage_untagged']}개 제외",
             "power_overlay": {
                 "substations": power["substations_154kv"],
